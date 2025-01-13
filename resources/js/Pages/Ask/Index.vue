@@ -5,46 +5,37 @@
 
         <div class="container mx-auto flex flex-col px-4">
             <!-- TOP BAR MENU -->
-            <div class="flex items-center justify-between">
-                <select
-                    v-model="selectedAIModel"
-                    class="rounded-md bg-transparent border-none focus:outline-none focus:ring-0"
-                >
-                    <option
-                        v-for="model in models"
-                        :key="model.name"
-                        :value="model.id"
-                    >
-                        {{ model.name }}
-                    </option>
-                </select>
-                <!-- USER AVATAR  -->
-                <div
-                    class="rounded-full text-white font-extrabold bg-teal-500 w-8 h-8 flex items-center justify-center"
-                >
-                    {{ user.name.charAt(0).toUpperCase() }}
-                </div>
-            </div>
-
+            <TopMenuBar
+                :models="models"
+                :user="user"
+                v-model="selectedAIModel"
+            />
             <!-- RESPONSE WINDOW -->
             <div
-                class="w-full max-w-3xl grow flex flex-col justify-center mx-auto"
+                class="w-full max-w-3xl grow flex flex-col mx-auto py-5"
+                :class="
+                    messages.length === 0 ? 'justify-center' : 'justify-between'
+                "
             >
-                <!-- Affichage de la réponse -->
                 <div
                     class="font-extrabold text-3xl text-center mb-5"
                     v-if="messages.length === 0"
                 >
                     Comment puis-je vous aider ?
                 </div>
-                <div
-                    v-for="message in messages"
-                    class="mb-4 p-4 bg-white rounded-lg shadow"
-                    :class="
-                        message.who === 'user' ? 'bg-gray-200' : 'bg-gray-300'
-                    "
-                    v-html="md.render(message.response)"
-                ></div>
+
+                <div class="flex flex-col space-y-4">
+                    <div
+                        v-for="message in messages"
+                        class="mb-4 p-4"
+                        :class="
+                            message.who === 'user'
+                                ? 'bg-zinc-100 rounded-full self-end'
+                                : ''
+                        "
+                        v-html="md.render(message.response)"
+                    ></div>
+                </div>
 
                 <form @submit.prevent="submitPrompt">
                     <!-- Sélection du modèle -->
@@ -81,6 +72,7 @@ import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css"; // Ajout du style de highlight.js
 import MenuBar from "./components/MenuBar.vue";
+import TopMenuBar from "./components/TopMenuBar.vue";
 
 // Actual default values
 const md = MarkdownIt({
@@ -90,7 +82,6 @@ const md = MarkdownIt({
                 return hljs.highlight(str, { language: lang }).value;
             } catch (__) {}
         }
-
         return ""; // use external default escaping
     },
 });
