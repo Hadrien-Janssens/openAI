@@ -12,12 +12,26 @@
                 <i class="fa-regular fa-pen-to-square"></i>
             </div>
         </div>
+        <div class="flex flex-col space-y-2 p-2">
+            <div
+                v-for="conversation in conversations"
+                class="p-1 hover:bg-gray-200 rounded-lg hover:cursor-pointer line-clamp-1"
+            >
+                {{ conversation.title }}
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
+const props = defineProps({
+    conversations: Object,
+});
+
 const isMenuOpen = defineModel();
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
 };
+
+console.log(props.conversations);
 </script>

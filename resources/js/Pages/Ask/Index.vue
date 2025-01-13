@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-screen bg-gray-50 flex overflow-hidden">
         <!-- BAR LATERAL  -->
-        <MenuBar v-model="isMenuOpen" />
+        <MenuBar v-model="isMenuOpen" :conversations="conversations" />
 
         <!-- MAIN  -->
         <div
@@ -125,6 +125,7 @@ const props = defineProps({
     selectedModel: String,
     flash: Object,
     user: Object,
+    conversations: Array,
 });
 
 const message = ref("");

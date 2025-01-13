@@ -29,6 +29,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'current_llm',
     ];
 
     /**
@@ -63,5 +64,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    public function conversations()
+    {
+        return $this->hasMany(Conversation::class);
     }
 }
