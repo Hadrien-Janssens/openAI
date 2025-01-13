@@ -3,12 +3,12 @@
         <!-- BAR LATERAL  -->
         <MenuBar />
 
-        <div class="container mx-auto flex flex-col">
+        <div class="container mx-auto flex flex-col px-4">
             <!-- TOP BAR MENU -->
             <div class="flex items-center justify-between">
                 <select
                     v-model="selectedAIModel"
-                    class="rounded-md bg-transparent border-none focus:border-indigo-500 focus:ring-indigo-500"
+                    class="rounded-md bg-transparent border-none focus:outline-none focus:ring-0"
                 >
                     <option
                         v-for="model in models"
@@ -27,7 +27,9 @@
             </div>
 
             <!-- RESPONSE WINDOW -->
-            <div class="max-w-3xl grow flex flex-col justify-center p-5">
+            <div
+                class="w-full max-w-3xl grow flex flex-col justify-center mx-auto"
+            >
                 <!-- Affichage de la réponse -->
                 <div
                     class="font-extrabold text-3xl text-center mb-5"
@@ -48,20 +50,24 @@
                     <!-- Sélection du modèle -->
 
                     <!-- Zone de texte -->
-                    <textarea
-                        v-model="message"
-                        rows="4"
-                        class="w-full rounded-3xl border-none px-4 py-3 resize-none bg-zinc-100"
-                        placeholder="Écrivez votre message ici..."
-                    ></textarea>
+                    <div class="bg-zinc-100 rounded-3xl p-2 flex flex-col">
+                        <textarea
+                            v-model="message"
+                            rows="2"
+                            class="w-full rounded-3xl border-none resize-none focus:outline-none bg-transparent focus:ring-0"
+                            placeholder="Écrivez votre message ici..."
+                        ></textarea>
 
-                    <button
-                        type="submit"
-                        class="rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 transition"
-                        :disabled="!message"
-                    >
-                        Envoyer
-                    </button>
+                        <button
+                            type="submit"
+                            class="rounded-full bg-black w-8 h-8 text-white transition self-end hover:scale-105 hover:cursor-pointer group"
+                            :disabled="!message"
+                        >
+                            <i
+                                class="fa-solid fa-arrow-up transition group-hover:scale-110"
+                            ></i>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
