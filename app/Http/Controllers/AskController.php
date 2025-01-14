@@ -28,9 +28,12 @@ class AskController extends Controller
         $request->validate([
             'message' => 'required|string',
             'model' => 'required|string',
+            'conversation_id' => 'nullable|exists:conversations,id',
         ]);
 
         try {
+
+
             $messages = [[
                 'role' => 'user',
                 'content' => $request->message,
@@ -44,7 +47,18 @@ class AskController extends Controller
             //update the user's current_llm
             auth()->user()->update(['current_llm' => $request->model]);
 
-            return redirect()->back()->with('message', $response);
+            if ($request->conversation_id) {
+            } else {
+                $conversation = Conversation::create([
+                    'user_id' => auth()->id(),
+                    'title' => 'test',
+                ]);
+            }
+
+            return redirect()->back()->with([
+                'message' => $response,
+                'conversationId' => $conversation->id,
+            ]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erreur: ' . $e->getMessage());
         }

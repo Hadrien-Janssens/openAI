@@ -133,6 +133,7 @@ const selectedAIModel = ref(props.selectedModel);
 const messages = ref([]);
 const isMenuOpen = ref(true);
 const messagesContainer = ref(null);
+const conversation_id = ref(null);
 
 const scrollToBottom = () => {
     if (messagesContainer.value) {
@@ -152,6 +153,7 @@ const submitPrompt = () => {
         {
             message: message.value,
             model: selectedAIModel.value,
+            conversation_id: conversation_id.value,
         },
         {
             onSuccess: () => {
@@ -167,6 +169,14 @@ watch(
     (response) => {
         messages.value.push({ response, who: "bot" });
         nextTick(() => scrollToBottom());
+    }
+);
+
+watch(
+    () => props.flash.conversationId,
+    (id) => {
+        console.log("conversation_id", id);
+        conversation_id.value = id;
     }
 );
 </script>

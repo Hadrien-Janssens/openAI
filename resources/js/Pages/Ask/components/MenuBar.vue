@@ -32,6 +32,4 @@ const isMenuOpen = defineModel();
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
 };
-
-console.log(props.conversations);
 </script>
