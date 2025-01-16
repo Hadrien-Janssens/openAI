@@ -73,6 +73,7 @@ import hljs from "highlight.js";
 import "highlight.js/styles/github.css"; // Ajout du style de highlight.js
 import MenuBar from "./components/MenuBar.vue";
 import TopMenuBar from "./components/TopMenuBar.vue";
+import { Button } from "@/Components/ui/button";
 
 // Actual default values
 const md = MarkdownIt({

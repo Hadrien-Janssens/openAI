@@ -37,7 +37,7 @@
                                     <textarea
                                         v-model="message"
                                         rows="2"
-                                        class="w-full rounded-3xl border-none resize-none focus:outline-none bg-transparent focus:ring-0"
+                                        class="w-full p-1 rounded-3xl border-none resize-none focus:outline-none bg-transparent focus:ring-0"
                                         placeholder="Écrivez votre message ici..."
                                     ></textarea>
                                     <button
@@ -67,32 +67,6 @@
                             v-html="md.render(message.response)"
                         ></div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Formulaire fixe en bas seulement quand il y a des messages -->
-            <div v-if="messages.length > 0" class="flex-none p-4">
-                <div class="w-full max-w-3xl mx-auto">
-                    <form @submit.prevent="submitPrompt">
-                        <div class="bg-zinc-100 rounded-3xl p-2 flex flex-col">
-                            <textarea
-                                v-model="message"
-                                rows="2"
-                                class="w-full rounded-3xl border-none resize-none focus:outline-none bg-transparent focus:ring-0"
-                                placeholder="Écrivez votre message ici..."
-                            ></textarea>
-
-                            <button
-                                type="submit"
-                                class="rounded-full bg-black w-8 h-8 text-white transition self-end hover:scale-105 hover:cursor-pointer group"
-                                :disabled="!message"
-                            >
-                                <i
-                                    class="fa-solid fa-arrow-up transition group-hover:scale-110"
-                                ></i>
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
