@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        Conversation::factory(3)->create([
-            'user_id' => 1,
-        ]);
+        // Conversation::factory(3)->create([
+        //     'user_id' => 1,
+        // ]);
     }
 }

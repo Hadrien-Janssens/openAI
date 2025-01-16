@@ -4,7 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class message extends Model
+class Message extends Model
 {
-    //
+    protected $fillable = ['role', 'content', 'conversation_id'];
+
+    public function conversation()
+    {
+        return $this->belongsTo(Conversation::class);
+    }
 }

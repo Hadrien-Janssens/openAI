@@ -9,21 +9,31 @@
             <i class="fa-solid fa-table-columns" @click="toggleMenu"></i>
             <div class="space-x-5">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <i class="fa-regular fa-pen-to-square"></i>
+                <Link :href="route('ask.post')">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                </Link>
             </div>
         </div>
         <div class="flex flex-col space-y-2 p-2">
             <div
                 v-for="conversation in conversations"
                 class="p-1 hover:bg-gray-200 rounded-lg hover:cursor-pointer line-clamp-1"
+                :class="conversation.id == conversationId ? 'bg-gray-200' : ''"
             >
-                {{ conversation.title }}
+                <Link
+                    :href="route('ask.show', { conversation: conversation.id })"
+                    class="w-full block"
+                >
+                    {{ conversation.title }}
+                </Link>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
+import { Link } from "@inertiajs/vue3";
+
 const props = defineProps({
     conversations: Object,
 });
@@ -32,4 +42,6 @@ const isMenuOpen = defineModel();
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
 };
+
+const conversationId = route().params["conversation"];
 </script>
