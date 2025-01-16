@@ -141,4 +141,11 @@ watch(
         nextTick(() => scrollToBottom());
     }
 );
+
+watch(
+    () => props.flash.model,
+    (model) => {
+        selectedAIModel.value = model;
+    }
+);
 </script>

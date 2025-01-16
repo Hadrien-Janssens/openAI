@@ -4,22 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\User;
 use App\Services\ChatService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AskController extends Controller
 {
     public function index()
     {
+        //find model preference
+        $user = User::find(Auth::id());
+
+        if ($user->current_llm) {
+            $selectedModel = $user->current_llm;
+        } else {
+            $selectedModel = ChatService::DEFAULT_MODEL;
+        }
+
         $models = (new ChatService())->getModels();
-        $selectedModel = ChatService::DEFAULT_MODEL;
-        $conversations = Conversation::where('user_id', auth()->id())->orderBy('created_at', 'desc')->get();
+        $conversations = Conversation::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Ask/Index', [
             'models' => $models,
             'selectedModel' => $selectedModel,
-            'user' => auth()->user(),
+            'user' => Auth::user(),
             'conversations' => $conversations,
         ]);
     }
@@ -27,15 +37,25 @@ class AskController extends Controller
     public function show(Conversation $conversation)
     {
 
+        //find model preference
+        $user = User::find(Auth::id());
+
+        if ($conversation->current_llm) {
+            $selectedModel = $conversation->current_llm;
+        } else if ($user->current_llm) {
+            $selectedModel = $user->current_llm;
+        } else {
+            $selectedModel = ChatService::DEFAULT_MODEL;
+        }
+
         $models = (new ChatService())->getModels();
-        $selectedModel = ChatService::DEFAULT_MODEL;
         $conversations = Conversation::where('user_id', auth()->id())->orderBy('created_at', 'desc')->get();
 
         $conversation->load('messages');
         return Inertia::render('Ask/Show', [
             'models' => $models,
             'selectedModel' => $selectedModel,
-            'user' => auth()->user(),
+            'user' => Auth::user(),
             'messages' => $conversation->messages,
             'conversations' => $conversations,
             'conversation' => $conversation,
@@ -89,12 +109,15 @@ class AskController extends Controller
                 //update the user's current_llm
                 auth()->user()->update(['current_llm' => $request->model]);
 
+                //udate curretn_llm in the conversation
+                $conversation->update(['current_llm' => $request->model]);
+
                 return redirect()->back()->with([
                     'message' => $response,
                     'conversationId' => $request->conversation_id,
+                    'model' => $request->model,
                 ]);
             } else {
-
                 $messages = [[
                     'role' => 'user',
                     'content' => $request->message,
@@ -133,6 +156,7 @@ class AskController extends Controller
                 $conversation = Conversation::create([
                     'user_id' => auth()->id(),
                     'title' => $title,
+                    'current_llm' => $request->model,
                 ]);
 
                 //create de user message
@@ -154,7 +178,9 @@ class AskController extends Controller
                 //     'conversationId' => $conversation->id,
                 // ]);
 
-                return redirect()->route('ask.show', $conversation->id);
+                return redirect()->route('ask.show', $conversation->id)->with([
+                    'model' => $request->model,
+                ]);
             }
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erreur: ' . $e->getMessage());
