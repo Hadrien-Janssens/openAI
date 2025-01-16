@@ -23,6 +23,7 @@
                 <Link
                     :href="route('ask.show', { conversation: conversation.id })"
                     class="w-full block"
+                    :title="conversation.title"
                 >
                     {{ conversation.title }}
                 </Link>

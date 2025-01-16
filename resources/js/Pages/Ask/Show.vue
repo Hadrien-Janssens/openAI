@@ -101,18 +101,22 @@ const messages = ref([]);
 const isMenuOpen = ref(true);
 const messagesContainer = ref(null);
 
-const scrollToBottom = () => {
+const scrollToBottom = (typeOfscrolling) => {
     if (messagesContainer.value) {
         messagesContainer.value.scrollTo({
             top: messagesContainer.value.scrollHeight,
-            behavior: "smooth",
+            behavior: typeOfscrolling,
         });
     }
 };
 
+onMounted(() => {
+    scrollToBottom("instant");
+});
+
 const submitPrompt = () => {
     messages.value.push({ response: message.value, who: "user" });
-    nextTick(() => scrollToBottom());
+    nextTick(() => scrollToBottom("smooth"));
 
     router.post(
         "/ask",

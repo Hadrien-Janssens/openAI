@@ -105,13 +105,34 @@ class AskController extends Controller
                     model: $request->model
                 );
 
+                //create a title for the conversation with AI
+                $prompt = "Génère un titre de quelques mots ( une phrase maximum ) pour cette conversation ";
+
+                $messages = [
+                    ...$messages,
+                    [
+                        'role' => 'assistant',
+                        'content' => $response,
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => $prompt,
+                    ]
+                ];
+
+                $title = (new ChatService())->sendMessage(
+                    messages: $messages,
+                    model: $request->model
+                );
+
+
                 //update the user's current_llm
                 auth()->user()->update(['current_llm' => $request->model]);
 
                 //create the conversation
                 $conversation = Conversation::create([
                     'user_id' => auth()->id(),
-                    'title' => $request->message,
+                    'title' => $title,
                 ]);
 
                 //create de user message
