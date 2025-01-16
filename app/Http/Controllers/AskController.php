@@ -14,7 +14,7 @@ class AskController extends Controller
     {
         $models = (new ChatService())->getModels();
         $selectedModel = ChatService::DEFAULT_MODEL;
-        $conversations = Conversation::where('user_id', auth()->id())->get();
+        $conversations = Conversation::where('user_id', auth()->id())->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Ask/Index', [
             'models' => $models,
@@ -29,7 +29,7 @@ class AskController extends Controller
 
         $models = (new ChatService())->getModels();
         $selectedModel = ChatService::DEFAULT_MODEL;
-        $conversations = Conversation::where('user_id', auth()->id())->get();
+        $conversations = Conversation::where('user_id', auth()->id())->orderBy('created_at', 'desc')->get();
 
         $conversation->load('messages');
         return Inertia::render('Ask/Show', [
