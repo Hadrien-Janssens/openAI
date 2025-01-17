@@ -23,12 +23,35 @@
         <div
             class="rounded-full text-white font-extrabold bg-cyan-600 w-8 h-8 flex items-center justify-center"
         >
-            {{ user.name.charAt(0).toUpperCase() }}
+            <DropdownMenu>
+                <DropdownMenuTrigger>{{
+                    user.name.charAt(0).toUpperCase()
+                }}</DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuLabel>Préférences</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                        <Link :href="route('customInstruction.index')"
+                            >custom instruction</Link
+                        >
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
     </div>
 </template>
 
 <script setup>
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Link } from "@inertiajs/vue3";
+
 defineProps({
     models: Array,
     user: Object,
