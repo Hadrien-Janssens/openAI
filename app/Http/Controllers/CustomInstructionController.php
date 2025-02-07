@@ -6,6 +6,7 @@ use App\Models\Conversation;
 use App\Models\User;
 use App\Services\ChatService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CustomInstructionController extends Controller
@@ -22,13 +23,29 @@ class CustomInstructionController extends Controller
         }
 
         $models = (new ChatService())->getModels();
-        $conversations = Conversation::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
+
 
         return Inertia::render('CustomInstruction/Index', [
-            'conversations' => $conversations,
             'models' => $models,
             'selectedModel' => $selectedModel,
             'user' => Auth::user(),
+
         ]);
+    }
+
+    public function aboutInstructions(Request $request)
+    {
+        // update du champ "about_instruction" du user
+        auth()->user()->update(['about_instruction' => $request->aboutInstruction]);
+
+        return redirect()->back();
+    }
+
+    public function comportementInstructions(Request $request)
+    {
+        // update du champ "comportement_instruction" du user
+        auth()->user()->update(['comportement_instruction' => $request->comportementInstruction]);
+
+        return redirect()->back();
     }
 }

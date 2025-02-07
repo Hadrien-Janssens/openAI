@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('password');
             $table->string('current_llm')->default('');
             $table->string('current_conversation')->default('new');
+            $table->text('about_instruction')->nullable();
+            $table->text('comportement_instruction')->nullable();
+            $table->text('commande_instruction')->nullable();
             $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();

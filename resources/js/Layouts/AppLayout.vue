@@ -45,13 +45,10 @@ const logout = () => {
 
         <Banner />
         <div class="flex">
-            <MenuBar v-model="isMenuOpen" :conversations="conversations" />
-            <div
-                class="min-h-screen grow w-full flex flex-col h-screen duration-300"
-                :class="isMenuOpen ? 'ml-60' : 'ml-0'"
-            >
+            <!-- <MenuBar v-model="isMenuOpen" :conversations="conversations" /> -->
+            <div class="w-full flex flex-col duration-300">
                 <nav
-                    class="bg-white border-b border-gray-100 flex w-full justify-between"
+                    class="bg-white border-b border-gray-100 flex w-full justify-between sticky top-0"
                 >
                     <TopMenuBar
                         :isMenuOpen="isMenuOpen"
@@ -270,6 +267,11 @@ const logout = () => {
                                         </template>
 
                                         <template #content>
+                                            <DropdownLink
+                                                :href="route('ask.index')"
+                                            >
+                                                conversation
+                                            </DropdownLink>
                                             <!-- Account Management -->
                                             <div
                                                 class="block px-4 py-2 text-xs text-gray-400"
@@ -547,7 +549,7 @@ const logout = () => {
                 </header>
 
                 <!-- Page Content -->
-                <main>
+                <main class="grow">
                     <slot />
                 </main>
             </div>

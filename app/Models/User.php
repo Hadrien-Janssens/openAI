@@ -30,6 +30,9 @@ class User extends Authenticatable
         'email',
         'password',
         'current_llm',
+        'about_instruction',
+        'comportement_instruction',
+        'commande_instruction'
     ];
 
     /**

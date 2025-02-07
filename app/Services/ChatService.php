@@ -117,13 +117,48 @@ class ChatService
     {
         $user = auth()->user();
         $now = now()->locale('fr')->format('l d F Y H:i');
+        $aboutInstruction = $user->about_instruction;
+        $comportementInstruction = $user->comportement_instruction;
 
         return [
             'role' => 'system',
             'content' => <<<EOT
                 Tu es un assistant de chat. La date et l'heure actuelle est le {$now}.
                 Tu es actuellement utilisé par {$user->name}.
+                Tu as été configuré pour répondre à des questions en prenant en compte la section a propos que voici : {$aboutInstruction}.
+                Tu as été configuré pour répondre à des questions en adoptant les comportements suivants: {$comportementInstruction}.
                 EOT,
         ];
+    }
+
+    public function streamConversation(array $messages, ?string $model = null, float $temperature = 0.7)
+    {
+        try {
+            logger()->info('Début streamConversation', [
+                'model' => $model,
+                'temperature' => $temperature,
+            ]);
+
+            $models = collect($this->getModels());
+            if (!$model || !$models->contains('id', $model)) {
+                $model = self::DEFAULT_MODEL;
+                logger()->info('Modèle par défaut utilisé:', ['model' => $model]);
+            }
+
+            $messages = [$this->getChatSystemPrompt(), ...$messages];
+
+            // Méthode "createStreamed" qui renvoie un flux "StreamResponse"
+            return $this->client->chat()->createStreamed([
+                'model' => $model,
+                'messages' => $messages,
+                'temperature' => $temperature,
+            ]);
+        } catch (\Exception $e) {
+            logger()->error('Erreur dans streamConversation:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
+        }
     }
 }

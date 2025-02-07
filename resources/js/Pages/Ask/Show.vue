@@ -44,10 +44,11 @@
                             <textarea
                                 v-model="message"
                                 rows="2"
-                                class="w-full rounded-3xl border-none resize-none focus:outline-none bg-transparent focus:ring-0"
+                                class="w-full p-4 rounded-3xl border-none resize-none focus:outline-none bg-transparent focus:ring-0"
                                 placeholder="Écrivez votre message ici..."
                             ></textarea>
 
+                            <i class="fa-regular fa-image"></i>
                             <button
                                 type="submit"
                                 class="rounded-full bg-black w-8 h-8 text-white transition self-end hover:scale-105 hover:cursor-pointer group"
@@ -71,8 +72,8 @@ import { router } from "@inertiajs/vue3";
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css"; // Ajout du style de highlight.js
-import MenuBar from "./components/MenuBar.vue";
-import TopMenuBar from "./components/TopMenuBar.vue";
+import MenuBar from "../../Components/MenuBar.vue";
+import TopMenuBar from "../../Components/TopMenuBar.vue";
 import { Button } from "@/Components/ui/button";
 
 // Actual default values
@@ -93,7 +94,7 @@ const props = defineProps({
     flash: Object,
     user: Object,
     conversations: Array,
-    conversation: Array,
+    conversation: Object,
 });
 
 const message = ref("");
@@ -101,6 +102,8 @@ const selectedAIModel = ref(props.selectedModel);
 const messages = ref([]);
 const isMenuOpen = ref(true);
 const messagesContainer = ref(null);
+const localMessages = ref(props.conversation.messages);
+const messagestreamer = ref("");
 
 const scrollToBottom = (typeOfscrolling) => {
     if (messagesContainer.value) {
@@ -110,10 +113,6 @@ const scrollToBottom = (typeOfscrolling) => {
         });
     }
 };
-
-onMounted(() => {
-    scrollToBottom("instant");
-});
 
 const submitPrompt = () => {
     messages.value.push({ response: message.value, who: "user" });
@@ -139,7 +138,7 @@ watch(
     () => props.flash.message,
     (response) => {
         messages.value.push({ response, who: "bot" });
-        nextTick(() => scrollToBottom());
+        nextTick(() => scrollToBottom("smooth"));
     }
 );
 
@@ -149,4 +148,75 @@ watch(
         selectedAIModel.value = model;
     }
 );
+
+watch(
+    () => messagestreamer.value,
+    (response) => {
+        messages.value.push({ response, who: "bot" });
+        nextTick(() => scrollToBottom("smooth"));
+    }
+);
+
+onMounted(() => {
+    scrollToBottom("instant");
+    const channel = `chat.${props.conversation.id}`;
+    console.log("🔌 Tentative de connexion au canal:", channel);
+
+    const subscription = window.Echo.private(channel)
+        .subscribed(() => {
+            console.log("✅ Connecté avec succès au canal:", channel);
+        })
+        .error((error) => {
+            console.error("❌ Erreur de connexion au canal:", error);
+        })
+        .listen(".message.streamed", (event) => {
+            console.log("📨 Message reçu:", event);
+
+            const lastMessage =
+                localMessages.value[localMessages.value.length - 1];
+
+            // Vérifier qu'on ait bien un message assistant en cours
+            if (!lastMessage || lastMessage.role !== "assistant") {
+                console.log("⚠️ Aucun message assistant ciblé pour concaténer");
+                return;
+            }
+
+            // Gestion d'erreur éventuelle
+            if (event.error) {
+                console.error("❌ Erreur reçue:", event.error);
+                // On peut retirer le message assistant, avertir l’utilisateur, etc.
+                localMessages.value.pop();
+                usePage().props.flash.error = event.content;
+                return;
+            }
+
+            // Dès qu’on reçoit le premier chunk, on peut désactiver un éventuel spinner
+            if (lastMessage.isLoading && event.content) {
+                console.log("🔄 Premier chunk reçu, on enlève le loading");
+                lastMessage.isLoading = false;
+            }
+
+            // Ajouter le chunk reçu
+            if (!event.isComplete) {
+                lastMessage.content += event.content;
+                messagestreamer.value = lastMessage.content;
+                nextTick(() => scrollToBottom("smooth"));
+            }
+
+            // Si c’est la fin, on peut déclencher des actions (comme l’update du titre)
+            if (event.isComplete) {
+                console.log("✅ Message complet reçu");
+                messagestreamer.value = lastMessage.content;
+                nextTick(() => scrollToBottom("smooth"));
+
+                if (localMessages.value.length === 2) {
+                    // par exemple, générer un titre
+                    sidebarRef.value?.updateTitle(props.conversation.id);
+                }
+            }
+            nextTick(() => scrollToBottom("smooth"));
+        });
+
+    channelSubscription.value = subscription;
+});
 </script>
