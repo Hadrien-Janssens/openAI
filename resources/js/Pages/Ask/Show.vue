@@ -1,11 +1,11 @@
 <template>
-    <div class="min-h-screen bg-gray-50 flex overflow-hidden">
+    <div class="flex min-h-screen overflow-hidden bg-gray-50">
         <!-- BAR LATERAL  -->
         <MenuBar v-model="isMenuOpen" :conversations="conversations" />
 
         <!-- MAIN  -->
         <div
-            class="w-full flex flex-col h-screen duration-300"
+            class="flex flex-col w-full h-screen duration-300"
             :class="isMenuOpen ? 'ml-60' : 'ml-0'"
         >
             <!-- TOP BAR MENU - Fixed at top -->
@@ -18,13 +18,13 @@
             />
 
             <!-- RESPONSE WINDOW - Scrollable -->
-            <div class="flex-1 overflow-y-auto p-4" ref="messagesContainer">
-                <div class="w-full max-w-3xl mx-auto h-full">
+            <div class="flex-1 p-4 overflow-y-auto" ref="messagesContainer">
+                <div class="w-full h-full max-w-3xl mx-auto">
                     <!-- Messages existants -->
                     <div class="flex flex-col space-y-4">
                         <div
                             v-for="message in conversation.messages"
-                            class="mb-4 p-4 py-3"
+                            class="p-4 py-3 mb-4"
                             :class="
                                 message.role === 'user'
                                     ? 'bg-zinc-100 rounded-full self-end'
@@ -40,22 +40,22 @@
             <div v-if="conversation.messages.length > 0" class="flex-none p-4">
                 <div class="w-full max-w-3xl mx-auto">
                     <form @submit.prevent="submitPrompt">
-                        <div class="bg-zinc-100 rounded-3xl p-2 flex flex-col">
+                        <div class="flex flex-col p-2 bg-zinc-100 rounded-3xl">
                             <textarea
                                 v-model="message"
                                 rows="2"
-                                class="w-full p-4 rounded-3xl border-none resize-none focus:outline-none bg-transparent focus:ring-0"
+                                class="w-full p-4 bg-transparent border-none resize-none rounded-3xl focus:outline-none focus:ring-0"
                                 placeholder="Écrivez votre message ici..."
                             ></textarea>
 
                             <i class="fa-regular fa-image"></i>
                             <button
                                 type="submit"
-                                class="rounded-full bg-black w-8 h-8 text-white transition self-end hover:scale-105 hover:cursor-pointer group"
+                                class="self-end w-8 h-8 text-white transition bg-black rounded-full hover:scale-105 hover:cursor-pointer group"
                                 :disabled="!message"
                             >
                                 <i
-                                    class="fa-solid fa-arrow-up transition group-hover:scale-110"
+                                    class="transition fa-solid fa-arrow-up group-hover:scale-110"
                                 ></i>
                             </button>
                         </div>
@@ -199,24 +199,28 @@ onMounted(() => {
             // Ajouter le chunk reçu
             if (!event.isComplete) {
                 lastMessage.content += event.content;
-                messagestreamer.value = lastMessage.content;
-                nextTick(() => scrollToBottom("smooth"));
+                // messagestreamer.value = lastMessage.content;
+                // nextTick(() => scrollToBottom("smooth"));
             }
 
             // Si c’est la fin, on peut déclencher des actions (comme l’update du titre)
             if (event.isComplete) {
                 console.log("✅ Message complet reçu");
-                messagestreamer.value = lastMessage.content;
-                nextTick(() => scrollToBottom("smooth"));
+                // messagestreamer.value = lastMessage.content;
+                // nextTick(() => scrollToBottom("smooth"));
 
-                if (localMessages.value.length === 2) {
-                    // par exemple, générer un titre
-                    sidebarRef.value?.updateTitle(props.conversation.id);
-                }
+                // if (localMessages.value.length === 2) {
+                // par exemple, générer un titre
+                // sidebarRef.value?.updateTitle(props.conversation.id);
+                // }
+                setTimeout(() => {
+                    nextTick(() => scrollToBottom("smooth"));
+                }, 400);
             }
+
             nextTick(() => scrollToBottom("smooth"));
         });
 
-    channelSubscription.value = subscription;
+    // channelSubscription.value = subscription;
 });
 </script>
