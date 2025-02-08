@@ -189,6 +189,7 @@ class AskController extends Controller
 
     public function streamMessage(Request $request)
     {
+
         $request->validate([
             'message' => 'required|string',
             'model'   => 'nullable|string',

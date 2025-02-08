@@ -23,7 +23,7 @@
                     <!-- Messages existants -->
                     <div class="flex flex-col space-y-4">
                         <div
-                            v-for="message in conversation.messages"
+                            v-for="message in localMessages"
                             class="p-4 py-3 mb-4"
                             :class="
                                 message.role === 'user'
@@ -74,7 +74,6 @@ import hljs from "highlight.js";
 import "highlight.js/styles/github.css"; // Ajout du style de highlight.js
 import MenuBar from "../../Components/MenuBar.vue";
 import TopMenuBar from "../../Components/TopMenuBar.vue";
-import { Button } from "@/Components/ui/button";
 
 // Actual default values
 const md = MarkdownIt({
@@ -95,11 +94,12 @@ const props = defineProps({
     user: Object,
     conversations: Array,
     conversation: Object,
+    model: String,
 });
 
 const message = ref("");
 const selectedAIModel = ref(props.selectedModel);
-const messages = ref([]);
+// const messages = ref([]);
 const isMenuOpen = ref(true);
 const messagesContainer = ref(null);
 const localMessages = ref(props.conversation.messages);
@@ -115,7 +115,20 @@ const scrollToBottom = (typeOfscrolling) => {
 };
 
 const submitPrompt = () => {
-    messages.value.push({ response: message.value, who: "user" });
+    // messages.value.push({ response: message.value, who: "user" });
+    // console.log(messages.value);
+
+    localMessages.value.push({
+        content: message.value,
+        role: "user",
+    });
+
+    localMessages.value.push({
+        content: "",
+        role: "assistant",
+        isLoading: true,
+    });
+
     nextTick(() => scrollToBottom("smooth"));
 
     router.post(
@@ -134,13 +147,13 @@ const submitPrompt = () => {
     );
 };
 
-watch(
-    () => props.flash.message,
-    (response) => {
-        messages.value.push({ response, who: "bot" });
-        nextTick(() => scrollToBottom("smooth"));
-    }
-);
+// watch(
+//     () => props.flash.message,
+//     (response) => {
+//         messages.value.push({ response, who: "bot" });
+//         nextTick(() => scrollToBottom("smooth"));
+//     }
+// );
 
 watch(
     () => props.flash.model,
@@ -149,13 +162,13 @@ watch(
     }
 );
 
-watch(
-    () => messagestreamer.value,
-    (response) => {
-        messages.value.push({ response, who: "bot" });
-        nextTick(() => scrollToBottom("smooth"));
-    }
-);
+// watch(
+//     () => messagestreamer.value,
+//     (response) => {
+//         messages.value.push({ response, who: "bot" });
+//         nextTick(() => scrollToBottom("smooth"));
+//     }
+// );
 
 onMounted(() => {
     scrollToBottom("instant");
@@ -170,10 +183,11 @@ onMounted(() => {
             console.error("❌ Erreur de connexion au canal:", error);
         })
         .listen(".message.streamed", (event) => {
-            console.log("📨 Message reçu:", event);
+            // console.log("📨 Message reçu:", event);
 
             const lastMessage =
                 localMessages.value[localMessages.value.length - 1];
+            console.log(lastMessage);
 
             // Vérifier qu'on ait bien un message assistant en cours
             if (!lastMessage || lastMessage.role !== "assistant") {
