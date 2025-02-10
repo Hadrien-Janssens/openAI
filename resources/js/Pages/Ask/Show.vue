@@ -99,11 +99,9 @@ const props = defineProps({
 
 const message = ref("");
 const selectedAIModel = ref(props.selectedModel);
-// const messages = ref([]);
 const isMenuOpen = ref(true);
 const messagesContainer = ref(null);
 const localMessages = ref(props.conversation.messages);
-const messagestreamer = ref("");
 
 const scrollToBottom = (typeOfscrolling) => {
     if (messagesContainer.value) {
@@ -115,9 +113,6 @@ const scrollToBottom = (typeOfscrolling) => {
 };
 
 const submitPrompt = () => {
-    // messages.value.push({ response: message.value, who: "user" });
-    // console.log(messages.value);
-
     localMessages.value.push({
         content: message.value,
         role: "user",
@@ -128,32 +123,26 @@ const submitPrompt = () => {
         role: "assistant",
         isLoading: true,
     });
+    const sentMessage = message.value;
+    message.value = "";
 
     nextTick(() => scrollToBottom("smooth"));
 
     router.post(
         "/ask",
         {
-            message: message.value,
+            message: sentMessage,
             model: selectedAIModel.value,
             conversation_id: route().params["conversation"],
         },
         {
             onSuccess: () => {
-                message.value = ""; // Réinitialiser le message après l'envoi
+                sentMessage = ""; // Réinitialiser le message après l'envoi
             },
             preserveScroll: true,
         }
     );
 };
-
-// watch(
-//     () => props.flash.message,
-//     (response) => {
-//         messages.value.push({ response, who: "bot" });
-//         nextTick(() => scrollToBottom("smooth"));
-//     }
-// );
 
 watch(
     () => props.flash.model,
@@ -161,14 +150,6 @@ watch(
         selectedAIModel.value = model;
     }
 );
-
-// watch(
-//     () => messagestreamer.value,
-//     (response) => {
-//         messages.value.push({ response, who: "bot" });
-//         nextTick(() => scrollToBottom("smooth"));
-//     }
-// );
 
 onMounted(() => {
     scrollToBottom("instant");
@@ -187,14 +168,12 @@ onMounted(() => {
 
             const lastMessage =
                 localMessages.value[localMessages.value.length - 1];
-            console.log(lastMessage);
 
             // Vérifier qu'on ait bien un message assistant en cours
             if (!lastMessage || lastMessage.role !== "assistant") {
                 console.log("⚠️ Aucun message assistant ciblé pour concaténer");
                 return;
             }
-
             // Gestion d'erreur éventuelle
             if (event.error) {
                 console.error("❌ Erreur reçue:", event.error);
@@ -213,16 +192,11 @@ onMounted(() => {
             // Ajouter le chunk reçu
             if (!event.isComplete) {
                 lastMessage.content += event.content;
-                // messagestreamer.value = lastMessage.content;
-                // nextTick(() => scrollToBottom("smooth"));
             }
 
             // Si c’est la fin, on peut déclencher des actions (comme l’update du titre)
             if (event.isComplete) {
                 console.log("✅ Message complet reçu");
-                // messagestreamer.value = lastMessage.content;
-                // nextTick(() => scrollToBottom("smooth"));
-
                 // if (localMessages.value.length === 2) {
                 // par exemple, générer un titre
                 // sidebarRef.value?.updateTitle(props.conversation.id);
@@ -234,7 +208,5 @@ onMounted(() => {
 
             nextTick(() => scrollToBottom("smooth"));
         });
-
-    // channelSubscription.value = subscription;
 });
 </script>

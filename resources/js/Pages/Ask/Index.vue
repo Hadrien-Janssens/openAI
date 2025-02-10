@@ -1,11 +1,11 @@
 <template>
-    <div class="min-h-screen bg-gray-50 flex overflow-hidden">
+    <div class="flex min-h-screen overflow-hidden bg-gray-50">
         <!-- BAR LATERAL  -->
         <MenuBar v-model="isMenuOpen" :conversations="conversations" />
 
         <!-- MAIN  -->
         <div
-            class="w-full flex flex-col h-screen duration-300"
+            class="flex flex-col w-full h-screen duration-300"
             :class="isMenuOpen ? 'ml-60' : 'ml-0'"
         >
             <!-- TOP BAR MENU - Fixed at top -->
@@ -18,29 +18,29 @@
             />
 
             <!-- RESPONSE WINDOW - Scrollable -->
-            <div class="flex-1 overflow-y-auto p-4" ref="messagesContainer">
-                <div class="w-full max-w-3xl mx-auto h-full">
+            <div class="flex-1 p-4 overflow-y-auto" ref="messagesContainer">
+                <div class="w-full h-full max-w-3xl mx-auto">
                     <!-- Container pour le centrage vertical -->
                     <div
-                        class="h-full flex flex-col justify-center items-center"
+                        class="flex flex-col items-center justify-center h-full"
                     >
-                        <div class="font-extrabold text-3xl text-center mb-5">
+                        <div class="mb-5 text-3xl font-extrabold text-center">
                             Comment puis-je vous aider ?
                         </div>
                         <!-- Déplacer le formulaire ici quand messages.length === 0 -->
                         <div class="w-full">
                             <form @submit.prevent="submitPrompt">
                                 <div
-                                    class="bg-zinc-100 rounded-3xl p-2 flex flex-col"
+                                    class="flex flex-col p-2 bg-zinc-100 rounded-3xl"
                                 >
                                     <textarea
                                         v-model="message"
                                         rows="2"
-                                        class="w-full rounded-3xl p-4 border-none resize-none focus:outline-none bg-transparent focus:ring-0"
+                                        class="w-full p-4 bg-transparent border-none resize-none rounded-3xl focus:outline-none focus:ring-0"
                                         placeholder="Écrivez votre message ici..."
                                     ></textarea>
                                     <div
-                                        class="flex justify-between items-center pl-5"
+                                        class="flex items-center justify-between pl-5"
                                     >
                                         <input
                                             type="file"
@@ -50,16 +50,16 @@
                                             @change="handleFileSelect"
                                         />
                                         <i
-                                            class="fa-regular fa-image text-gray-500 text-2xl hover:cursor-pointer"
+                                            class="text-2xl text-gray-500 fa-regular fa-image hover:cursor-pointer"
                                             @click="$refs.fileInput.click()"
                                         ></i>
                                         <button
                                             type="submit"
-                                            class="rounded-full bg-black w-8 h-8 text-white transition self-end hover:scale-105 hover:cursor-pointer group"
+                                            class="self-end w-8 h-8 text-white transition bg-black rounded-full hover:scale-105 hover:cursor-pointer group"
                                             :disabled="!message"
                                         >
                                             <i
-                                                class="fa-solid fa-arrow-up transition group-hover:scale-110"
+                                                class="transition fa-solid fa-arrow-up group-hover:scale-110"
                                             ></i>
                                         </button>
                                     </div>
@@ -67,51 +67,8 @@
                             </form>
                         </div>
                     </div>
-
-                    <!-- Messages existants -->
-                    <!-- <div v-else class="flex flex-col space-y-4">
-                        <div
-                            v-for="message in messages"
-                            class="mb-4 p-4 py-3"
-                            :class="
-                                message.who === 'user'
-                                    ? 'bg-zinc-100 rounded-full self-end'
-                                    : ''
-                            "
-                            v-html="md.render(message.response)"
-                        ></div>
-                    </div> -->
                 </div>
             </div>
-
-            <!-- Formulaire fixe en bas seulement quand il y a des messages -->
-            <!-- <div v-if="messages.length > 0" class="flex-none p-4">
-                <div class="w-full max-w-3xl mx-auto">
-                    <form @submit.prevent="submitPrompt">
-                        <div class="bg-zinc-100 rounded-3xl p-4 flex flex-col">
-                            <textarea
-                                v-model="message"
-                                rows="2"
-                                class="w-full p-4 rounded-3xl border-none resize-none focus:outline-none bg-transparent focus:ring-0"
-                                placeholder="Écrivez votre message ici..."
-                            ></textarea>
-                            <div>
-                                <i class="fa-regular fa-image"></i>
-
-                                <button
-                                    type="submit"
-                                    class="rounded-full bg-white w-8 h-8 text-white transition self-end hover:scale-105 hover:cursor-pointer group"
-                                    :disabled="!message"
-                                >
-                                    <i
-                                        class="fa-solid fa-arrow-up transition group-hover:scale-110"
-                                    ></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div> -->
         </div>
     </div>
 </template>
