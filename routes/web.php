@@ -11,15 +11,16 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    // Route::get('/dashboard', function () {
+    //     return Inertia::render('Dashboard');
+    // })->name('dashboard');
 
 
-    Route::get('/ask', [AskController::class, 'index'])->name('ask.index');
-    Route::post('/ask/create', [AskController::class, 'create'])->name('ask.create');
-    Route::post('/ask/update-title', [AskController::class, 'updateTitle'])->name('ask.updateTitle');
-    Route::get('/ask/{conversation}', [AskController::class, 'show'])->name('ask.show');
+    Route::get('/', [AskController::class, 'index'])->name('ask.index');
+    Route::post('/create', [AskController::class, 'create'])->name('ask.create');
+    Route::post('/update-title', [AskController::class, 'updateTitle'])->name('ask.updateTitle');
+    Route::get('/{conversation}', [AskController::class, 'show'])->name('ask.show');
+    Route::delete('/conversation/{conversation}', [AskController::class, 'destroy'])->name('ask.destroy');
     Route::post('/ask', [AskController::class, 'streamMessage'])->name('ask.post');
     Route::get('/custom-instruction', [CustomInstructionController::class, 'index'])->name('customInstruction.index');
     Route::post('/custom-instruction/about', [CustomInstructionController::class, 'aboutInstructions'])->name('customInstruction.aboutInstructions');

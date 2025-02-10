@@ -17,23 +17,35 @@
         <div class="flex flex-col p-2 space-y-2">
             <div
                 v-for="conversation in conversations"
-                class="p-1 rounded-lg hover:bg-gray-200 hover:cursor-pointer line-clamp-1"
+                class="p-1 rounded-lg hover:bg-gray-200 hover:cursor-pointer"
                 :class="conversation.id == conversationId ? 'bg-gray-200' : ''"
             >
-                <Link
-                    :href="route('ask.show', { conversation: conversation.id })"
-                    class="block w-full"
-                    :title="conversation.title"
-                >
-                    {{ conversation.title }}
-                </Link>
+                <div class="flex items-start space-x-2 group line-clamp-1">
+                    <Link
+                        :href="
+                            route('ask.show', { conversation: conversation.id })
+                        "
+                        class="block w-full"
+                        :title="conversation.title"
+                    >
+                        {{ conversation.title }}
+                    </Link>
+
+                    <button
+                        @click="deleteConversation(conversation.id)"
+                        class="transition-opacity duration-150 opacity-0 group-hover:opacity-100"
+                    >
+                        <!-- icône de poubelle -->
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 
 const props = defineProps({
     conversations: Object,
@@ -45,4 +57,10 @@ const toggleMenu = () => {
 };
 
 const conversationId = route().params["conversation"];
+
+const deleteConversation = (id) => {
+    if (confirm("Voulez-vous vraiment supprimer cette conversation ?")) {
+        router.delete(route("ask.destroy", { conversation: id }));
+    }
+};
 </script>

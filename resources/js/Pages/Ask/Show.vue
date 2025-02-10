@@ -48,7 +48,6 @@
                                 placeholder="Écrivez votre message ici..."
                             ></textarea>
 
-                            <i class="fa-regular fa-image"></i>
                             <button
                                 type="submit"
                                 class="self-end w-8 h-8 text-white transition bg-black rounded-full hover:scale-105 hover:cursor-pointer group"
@@ -158,7 +157,7 @@ const submitPrompt = () => {
     );
 };
 const updateTitle = (conv_id) => {
-    router.post("/ask/update-title", {
+    router.post("/update-title", {
         conv_id,
     });
 };
