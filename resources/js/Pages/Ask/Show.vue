@@ -68,7 +68,7 @@
 
 <script setup>
 import { ref, watch, nextTick, onMounted } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css"; // Ajout du style de highlight.js
@@ -113,20 +113,32 @@ const scrollToBottom = (typeOfscrolling) => {
 };
 
 const submitPrompt = () => {
-    localMessages.value.push({
-        content: message.value,
-        role: "user",
-    });
+    let sentMessage = "";
 
-    localMessages.value.push({
-        content: "",
-        role: "assistant",
-        isLoading: true,
-    });
-    const sentMessage = message.value;
-    message.value = "";
+    if (props.flash.new) {
+        sentMessage = props.conversation.messages[0].content;
+        localMessages.value.push({
+            content: "",
+            role: "assistant",
+            isLoading: true,
+        });
+    } else {
+        localMessages.value.push({
+            content: message.value,
+            role: "user",
+        });
 
-    nextTick(() => scrollToBottom("smooth"));
+        localMessages.value.push({
+            content: "",
+            role: "assistant",
+            isLoading: true,
+        });
+
+        sentMessage = message.value;
+        message.value = "";
+
+        nextTick(() => scrollToBottom("smooth"));
+    }
 
     router.post(
         "/ask",
@@ -152,6 +164,9 @@ watch(
 );
 
 onMounted(() => {
+    if (props.flash.new) {
+        submitPrompt();
+    }
     scrollToBottom("instant");
     const channel = `chat.${props.conversation.id}`;
     console.log("🔌 Tentative de connexion au canal:", channel);

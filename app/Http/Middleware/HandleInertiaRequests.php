@@ -41,6 +41,8 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn() => $request->session()->get('error'),
                 'pending_message' => fn() => $request->session()->get('pending_message'),
                 'conversationId' => $request->session()->get('conversationId'),
+                'model' => $request->session()->get('model'),
+                'new' => $request->session()->get('new'),
             ],
             'conversations' => fn() => $request->user()
                 ? \App\Models\Conversation::where('user_id', $request->user()->id)->get()

@@ -37,7 +37,6 @@ class AskController extends Controller
 
     public function show(Conversation $conversation)
     {
-
         //find model preference
         $user = User::find(Auth::id());
 
@@ -60,6 +59,25 @@ class AskController extends Controller
             'messages' => $conversation->messages,
             'conversations' => $conversations,
             'conversation' => $conversation,
+        ]);
+    }
+    public function create(Request $request)
+    {
+        $conversation = Conversation::create([
+            'user_id' => auth()->id(),
+            'title' => 'Nouvelle conversation',
+            'current_llm' => auth()->user()->current_llm,
+        ]);
+
+        $conversation->messages()->create([
+            'role' => 'user',
+            'content' => $request->message,
+        ]);
+
+        return redirect()->route('ask.show', $conversation->id)->with([
+            'model' => $request->model,
+            'new' => true,
+            'conversationId' => $conversation->id,
         ]);
     }
 

@@ -40,19 +40,8 @@
                                         placeholder="Écrivez votre message ici..."
                                     ></textarea>
                                     <div
-                                        class="flex items-center justify-between pl-5"
+                                        class="flex items-center justify-end pl-5"
                                     >
-                                        <input
-                                            type="file"
-                                            ref="fileInput"
-                                            class="hidden"
-                                            accept="image/*"
-                                            @change="handleFileSelect"
-                                        />
-                                        <i
-                                            class="text-2xl text-gray-500 fa-regular fa-image hover:cursor-pointer"
-                                            @click="$refs.fileInput.click()"
-                                        ></i>
                                         <button
                                             type="submit"
                                             class="self-end w-8 h-8 text-white transition bg-black rounded-full hover:scale-105 hover:cursor-pointer group"
@@ -75,7 +64,7 @@
 
 <script setup>
 import { ref, watch, nextTick } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, useForm } from "@inertiajs/vue3";
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css"; // Ajout du style de highlight.js
@@ -83,16 +72,16 @@ import MenuBar from "@/components/MenuBar.vue";
 import TopMenuBar from "@/components/TopMenuBar.vue";
 
 // Actual default values
-const md = MarkdownIt({
-    highlight: function (str, lang) {
-        if (lang && hljs.getLanguage(lang)) {
-            try {
-                return hljs.highlight(str, { language: lang }).value;
-            } catch (__) {}
-        }
-        return ""; // use external default escaping
-    },
-});
+// const md = MarkdownIt({
+//     highlight: function (str, lang) {
+//         if (lang && hljs.getLanguage(lang)) {
+//             try {
+//                 return hljs.highlight(str, { language: lang }).value;
+//             } catch (__) {}
+//         }
+//         return ""; // use external default escaping
+//     },
+// });
 
 const props = defineProps({
     models: Array,
@@ -104,65 +93,52 @@ const props = defineProps({
 
 const message = ref("");
 const selectedAIModel = ref(props.selectedModel);
-const messages = ref([]);
+// const messages = ref([]);
 const isMenuOpen = ref(true);
 const messagesContainer = ref(null);
 const conversation_id = ref(null);
-const fileInput = ref(null);
-const selectedFile = ref(null);
+// const fileInput = ref(null);
+// const selectedFile = ref(null);
+const form = useForm({
+    message: "",
+    model: selectedAIModel.value,
+    conversation_id: conversation_id.value,
+});
 
-const scrollToBottom = () => {
-    if (messagesContainer.value) {
-        messagesContainer.value.scrollTo({
-            top: messagesContainer.value.scrollHeight,
-            behavior: "smooth",
-        });
-    }
-};
+// const scrollToBottom = () => {
+//     if (messagesContainer.value) {
+//         messagesContainer.value.scrollTo({
+//             top: messagesContainer.value.scrollHeight,
+//             behavior: "smooth",
+//         });
+//     }
+// };
 
-const handleFileSelect = (event) => {
-    selectedFile.value = event.target.files[0];
-};
+// const handleFileSelect = (event) => {
+//     selectedFile.value = event.target.files[0];
+// };
 
 const submitPrompt = () => {
-    const formData = new FormData();
-    formData.append("message", message.value);
-    formData.append("model", selectedAIModel.value);
-    if (conversation_id.value) {
-        formData.append("conversation_id", conversation_id.value);
-    }
-    if (selectedFile.value) {
-        formData.append("image", selectedFile.value);
-    }
-
-    messages.value.push({ response: message.value, who: "user" });
-    nextTick(() => scrollToBottom());
-
-    router.post("/ask", formData, {
-        onSuccess: () => {
-            message.value = "";
-            selectedFile.value = null;
-            if (fileInput.value) {
-                fileInput.value.value = "";
-            }
-        },
-        preserveScroll: true,
-    });
+    // messages.value.push({ content: message.value, role: "user" });
+    // nextTick(() => scrollToBottom());
+    form.message = message.value;
+    form.post(route("ask.create"));
+    form.reset();
 };
 
-watch(
-    () => props.flash.message,
-    (response) => {
-        messages.value.push({ response, who: "bot" });
-        nextTick(() => scrollToBottom());
-    }
-);
+// watch(
+//     () => props.flash.message,
+//     (response) => {
+//         messages.value.push({ response, who: "bot" });
+//         nextTick(() => scrollToBottom());
+//     }
+// );
 
-watch(
-    () => props.flash.conversationId,
-    (id) => {
-        console.log("conversation_id", id);
-        conversation_id.value = id;
-    }
-);
+// watch(
+//     () => props.flash.conversationId,
+//     (id) => {
+//         console.log("conversation_id", id);
+//         conversation_id.value = id;
+//     }
+// );
 </script>
