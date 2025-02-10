@@ -17,7 +17,8 @@ Route::middleware([
 
 
     Route::get('/ask', [AskController::class, 'index'])->name('ask.index');
-    Route::post('/ask/create',[AskController::class, 'create'])->name('ask.create');
+    Route::post('/ask/create', [AskController::class, 'create'])->name('ask.create');
+    Route::post('/ask/update-title', [AskController::class, 'updateTitle'])->name('ask.updateTitle');
     Route::get('/ask/{conversation}', [AskController::class, 'show'])->name('ask.show');
     Route::post('/ask', [AskController::class, 'streamMessage'])->name('ask.post');
     Route::get('/custom-instruction', [CustomInstructionController::class, 'index'])->name('customInstruction.index');

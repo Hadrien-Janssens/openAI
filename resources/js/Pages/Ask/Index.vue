@@ -63,25 +63,11 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from "vue";
-import { router, useForm } from "@inertiajs/vue3";
-import MarkdownIt from "markdown-it";
-import hljs from "highlight.js";
+import { ref } from "vue";
+import { useForm } from "@inertiajs/vue3";
 import "highlight.js/styles/github.css"; // Ajout du style de highlight.js
-import MenuBar from "@/components/MenuBar.vue";
-import TopMenuBar from "@/components/TopMenuBar.vue";
-
-// Actual default values
-// const md = MarkdownIt({
-//     highlight: function (str, lang) {
-//         if (lang && hljs.getLanguage(lang)) {
-//             try {
-//                 return hljs.highlight(str, { language: lang }).value;
-//             } catch (__) {}
-//         }
-//         return ""; // use external default escaping
-//     },
-// });
+import MenuBar from "@/Components/MenuBar.vue";
+import TopMenuBar from "@/Components/TopMenuBar.vue";
 
 const props = defineProps({
     models: Array,
@@ -93,52 +79,18 @@ const props = defineProps({
 
 const message = ref("");
 const selectedAIModel = ref(props.selectedModel);
-// const messages = ref([]);
 const isMenuOpen = ref(true);
 const messagesContainer = ref(null);
 const conversation_id = ref(null);
-// const fileInput = ref(null);
-// const selectedFile = ref(null);
 const form = useForm({
     message: "",
     model: selectedAIModel.value,
     conversation_id: conversation_id.value,
 });
 
-// const scrollToBottom = () => {
-//     if (messagesContainer.value) {
-//         messagesContainer.value.scrollTo({
-//             top: messagesContainer.value.scrollHeight,
-//             behavior: "smooth",
-//         });
-//     }
-// };
-
-// const handleFileSelect = (event) => {
-//     selectedFile.value = event.target.files[0];
-// };
-
 const submitPrompt = () => {
-    // messages.value.push({ content: message.value, role: "user" });
-    // nextTick(() => scrollToBottom());
     form.message = message.value;
     form.post(route("ask.create"));
     form.reset();
 };
-
-// watch(
-//     () => props.flash.message,
-//     (response) => {
-//         messages.value.push({ response, who: "bot" });
-//         nextTick(() => scrollToBottom());
-//     }
-// );
-
-// watch(
-//     () => props.flash.conversationId,
-//     (id) => {
-//         console.log("conversation_id", id);
-//         conversation_id.value = id;
-//     }
-// );
 </script>

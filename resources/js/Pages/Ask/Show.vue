@@ -117,6 +117,7 @@ const submitPrompt = () => {
 
     if (props.flash.new) {
         sentMessage = props.conversation.messages[0].content;
+
         localMessages.value.push({
             content: "",
             role: "assistant",
@@ -145,6 +146,7 @@ const submitPrompt = () => {
         {
             message: sentMessage,
             model: selectedAIModel.value,
+            new: props.flash.new,
             conversation_id: route().params["conversation"],
         },
         {
@@ -154,6 +156,11 @@ const submitPrompt = () => {
             preserveScroll: true,
         }
     );
+};
+const updateTitle = (conv_id) => {
+    router.post("/ask/update-title", {
+        conv_id,
+    });
 };
 
 watch(
@@ -212,10 +219,11 @@ onMounted(() => {
             // Si c’est la fin, on peut déclencher des actions (comme l’update du titre)
             if (event.isComplete) {
                 console.log("✅ Message complet reçu");
-                // if (localMessages.value.length === 2) {
-                // par exemple, générer un titre
-                // sidebarRef.value?.updateTitle(props.conversation.id);
-                // }
+                if (localMessages.value.length === 2) {
+                    console.log(props.conversation.title);
+                    updateTitle(props.conversation.id);
+                }
+
                 setTimeout(() => {
                     nextTick(() => scrollToBottom("smooth"));
                 }, 400);
