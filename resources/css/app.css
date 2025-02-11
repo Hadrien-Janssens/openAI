@@ -91,4 +91,7 @@
         -ms-overflow-style: none; /* IE and Edge */
         scrollbar-width: none; /* Firefox */
     }
+    .z-50 {
+        overflow: visible !important;
+    }
 }

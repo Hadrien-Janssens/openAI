@@ -32,6 +32,35 @@
                             "
                             v-html="md.render(message.content)"
                         ></div>
+
+                        <div v-if="loader" class="flex px-4 space-x-2">
+                            <div
+                                class="w-2 h-3 bg-black rounded-full animate-bounce [animation-duration:0.9s]"
+                            ></div>
+                            <div
+                                class="w-2 h-3 bg-black rounded-full animate-bounce [animation-duration:0.9s] [animation-delay:0.2s]"
+                            ></div>
+                            <div
+                                class="w-2 h-3 bg-black rounded-full animate-bounce [animation-duration:0.9s] [animation-delay:0.4s]"
+                            ></div>
+                        </div>
+
+                        <div
+                            v-if="error"
+                            class="flex items-center px-4 space-x-2"
+                        >
+                            <p class="text-red-500">
+                                ❌ Une erreur est survenue. Veuillez réessayer
+                            </p>
+                            <button
+                                @click="submitPrompt"
+                                class="w-8 h-8 p-1 border rounded-full"
+                            >
+                                <i
+                                    class="text-gray-600 fa-solid fa-rotate-right"
+                                ></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -93,14 +122,16 @@ const props = defineProps({
     conversations: Array,
     conversation: Object,
     model: String,
+    error: String,
 });
-console.log(props.model);
 
 const message = ref("");
 const selectedAIModel = ref(props.model);
 const isMenuOpen = ref(true);
 const messagesContainer = ref(null);
 const localMessages = ref(props.conversation.messages);
+const loader = ref(false);
+const error = ref(false);
 
 const scrollToBottom = (typeOfscrolling) => {
     if (messagesContainer.value) {
@@ -110,34 +141,38 @@ const scrollToBottom = (typeOfscrolling) => {
         });
     }
 };
-
+let sentMessage;
 const submitPrompt = () => {
-    let sentMessage = "";
+    loader.value = true;
 
-    if (props.flash.new) {
-        sentMessage = props.conversation.messages[0].content;
+    if (!error.value) {
+        sentMessage = "";
+        if (props.flash.new) {
+            sentMessage = props.conversation.messages[0].content;
 
-        localMessages.value.push({
-            content: "",
-            role: "assistant",
-            isLoading: true,
-        });
-    } else {
-        localMessages.value.push({
-            content: message.value,
-            role: "user",
-        });
+            localMessages.value.push({
+                content: "",
+                role: "assistant",
+                isLoading: true,
+            });
+        } else {
+            localMessages.value.push({
+                content: message.value,
+                role: "user",
+            });
 
-        localMessages.value.push({
-            content: "",
-            role: "assistant",
-            isLoading: true,
-        });
+            localMessages.value.push({
+                content: "",
+                role: "assistant",
+                isLoading: true,
+            });
 
-        sentMessage = message.value;
-        message.value = "";
+            error.value = false;
+            sentMessage = message.value;
+            message.value = "";
 
-        nextTick(() => scrollToBottom("smooth"));
+            nextTick(() => scrollToBottom("smooth"));
+        }
     }
 
     router.post(
@@ -198,16 +233,25 @@ onMounted(() => {
             // Gestion d'erreur éventuelle
             if (event.error) {
                 console.error("❌ Erreur reçue:", event.error);
+                loader.value = false;
+                // lastMessage.content +=
+                //     "Une erreur est survenue. Veuillez réessayer.";
+                error.value = true;
+
                 // On peut retirer le message assistant, avertir l’utilisateur, etc.
-                localMessages.value.pop();
+                // localMessages.value.pop();
                 usePage().props.flash.error = event.content;
-                return;
+                setTimeout(() => {
+                    nextTick(() => scrollToBottom("smooth"));
+                }, 400);
+                // return;
             }
 
             // Dès qu’on reçoit le premier chunk, on peut désactiver un éventuel spinner
             if (lastMessage.isLoading && event.content) {
                 console.log("🔄 Premier chunk reçu, on enlève le loading");
-                lastMessage.isLoading = false;
+                loader.value = false;
+                // lastMessage.isLoading = false;
             }
 
             // Ajouter le chunk reçu
@@ -219,7 +263,7 @@ onMounted(() => {
             if (event.isComplete) {
                 console.log("✅ Message complet reçu");
                 if (localMessages.value.length === 2) {
-                    console.log(props.conversation.title);
+                    // console.log(props.conversation.title);
                     updateTitle(props.conversation.id);
                 }
 

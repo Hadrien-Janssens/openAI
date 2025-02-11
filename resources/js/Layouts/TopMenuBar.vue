@@ -3,12 +3,13 @@
         <div>
             <i
                 v-if="!isMenuOpen"
-                class="fa-solid fa-table-columns text-xl text-gray-600"
+                class="text-xl text-gray-600 fa-solid fa-table-columns"
                 @click="$emit('update:isMenuOpen', !isMenuOpen)"
             ></i>
             <select
+                v-if="withSelectedIAModel"
                 v-model="selectedAIModel"
-                class="rounded-md bg-transparent border-none focus:outline-none focus:ring-0"
+                class="bg-transparent border-none rounded-md focus:outline-none focus:ring-0"
             >
                 <option
                     v-for="model in models"
@@ -27,6 +28,7 @@ defineProps({
     models: Array,
     user: Object,
     isMenuOpen: Boolean,
+    withSelectedIAModel: Boolean,
 });
 const selectedAIModel = defineModel();
 

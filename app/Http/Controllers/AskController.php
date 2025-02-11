@@ -7,7 +7,6 @@ use App\Models\Conversation;
 use App\Models\User;
 use App\Services\ChatService;
 use Illuminate\Http\Request;
-use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -68,6 +67,8 @@ class AskController extends Controller
             'title' => 'Nouvelle conversation',
             'current_llm' => $request->model,
         ]);
+
+        auth()->user()->update(['current_llm' => $request->model]);
 
         $conversation->messages()->create([
             'role' => 'user',
@@ -191,7 +192,11 @@ class AskController extends Controller
                 ));
             }
 
-            return response()->json(['error' => $e->getMessage()], 500);
+            // return response()->json(['error' => $e->getMessage()], 500);
+            return redirect()->route('ask.show', $conversation->id)->with([
+                'model' => $request->model,
+                'error' => $e->getMessage(),
+            ]);
         }
     }
     public function updateTitle(Request $request)

@@ -50,12 +50,13 @@ const logout = () => {
                 <nav
                     class="sticky top-0 flex justify-between w-full bg-white border-b border-gray-100"
                 >
-                    <TopMenuBar
+                    <!-- <TopMenuBar
                         :isMenuOpen="isMenuOpen"
                         :models="models"
                         :user="user"
                         @update:isMenuOpen="isMenuOpen = $event"
-                    />
+                        :withSelectedIAModel="false"
+                    /> -->
                     <!-- Primary Navigation Menu -->
                     <div class="">
                         <div class="flex justify-between h-16">
