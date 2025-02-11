@@ -233,6 +233,8 @@ onMounted(() => {
             // Gestion d'erreur éventuelle
             if (event.error) {
                 console.error("❌ Erreur reçue:", event.error);
+                console.log(event.content);
+
                 loader.value = false;
                 // lastMessage.content +=
                 //     "Une erreur est survenue. Veuillez réessayer.";

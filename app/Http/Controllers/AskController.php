@@ -68,7 +68,7 @@ class AskController extends Controller
             'current_llm' => $request->model,
         ]);
 
-        auth()->user()->update(['current_llm' => $request->model]);
+        // auth()->user()->update(['current_llm' => $request->model]);
 
         $conversation->messages()->create([
             'role' => 'user',
