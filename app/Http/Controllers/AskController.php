@@ -7,6 +7,7 @@ use App\Models\Conversation;
 use App\Models\User;
 use App\Services\ChatService;
 use Illuminate\Http\Request;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -53,7 +54,7 @@ class AskController extends Controller
         $conversation->load('messages');
         return Inertia::render('Ask/Show', [
             'models' => $models,
-            'selectedModel' => $selectedModel,
+            'model' => $selectedModel,
             'user' => Auth::user(),
             'messages' => $conversation->messages,
             'conversations' => $conversations,
@@ -65,7 +66,7 @@ class AskController extends Controller
         $conversation = Conversation::create([
             'user_id' => Auth::id(),
             'title' => 'Nouvelle conversation',
-            'current_llm' => Auth::user()->current_llm,
+            'current_llm' => $request->model,
         ]);
 
         $conversation->messages()->create([
@@ -195,7 +196,9 @@ class AskController extends Controller
     }
     public function updateTitle(Request $request)
     {
+        // dd($request->all());
         $conversation = Conversation::find($request->conv_id);
+        $model = $conversation->current_llm;
         $messages = $conversation->messages()
             ->orderBy('created_at', 'asc')
             ->get()
@@ -216,13 +219,24 @@ class AskController extends Controller
             ]
         ];
 
-        $title = (new ChatService())->sendMessage(
-            messages: $messages,
-            model: $request->model
-        );
+        $haveError = true;
+
+        while ($haveError) {
+            try {
+                $title = (new ChatService())->sendMessage(
+                    messages: $messages,
+                    model: $model
+                );
+                $haveError = false;
+            } catch (\Throwable $th) {
+            }
+        }
 
         $conversation->update(['title' => $title]);
-        return redirect()->route('ask.show', $conversation->id);
+        // return redirect()->route('ask.show', $conversation->id);
+        return redirect()->route('ask.show', $conversation->id)->with([
+            'model' => $model,
+        ]);
     }
     public function destroy($conversation)
     {

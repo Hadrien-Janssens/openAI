@@ -8,15 +8,28 @@
         >
             <i class="fa-solid fa-table-columns" @click="toggleMenu"></i>
             <div class="space-x-5">
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <i
+                    class="cursor-pointer fa-solid fa-magnifying-glass"
+                    @click="toggleSearch"
+                ></i>
                 <Link :href="route('ask.index')">
                     <i class="fa-regular fa-pen-to-square"></i>
                 </Link>
             </div>
         </div>
+
+        <div v-if="isSearchVisible" class="px-4 mb-2">
+            <input
+                type="text"
+                v-model="searchTerm"
+                class="w-full px-2 py-1 text-sm border rounded-lg focus:outline-none focus:border-gray-400"
+                placeholder="Rechercher..."
+            />
+        </div>
+
         <div class="flex flex-col p-2 space-y-2">
             <div
-                v-for="conversation in conversations"
+                v-for="conversation in filteredConversations"
                 class="p-1 rounded-lg hover:bg-gray-200 hover:cursor-pointer"
                 :class="conversation.id == conversationId ? 'bg-gray-200' : ''"
             >
@@ -32,35 +45,67 @@
                     </Link>
 
                     <button
-                        @click="deleteConversation(conversation.id)"
+                        @click="openDeleteModal(conversation.id)"
                         class="transition-opacity duration-150 opacity-0 group-hover:opacity-100"
                     >
-                        <!-- icône de poubelle -->
                         <i class="fa-regular fa-trash-can"></i>
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <ConfirmationModal v-model="showDeleteModal" @confirm="confirmDelete" />
 </template>
 
 <script setup>
 import { Link, router } from "@inertiajs/vue3";
+import { ref, computed } from "vue";
+import ConfirmationModal from "./ConfirmationModal.vue";
 
 const props = defineProps({
     conversations: Object,
 });
 
 const isMenuOpen = defineModel();
+const showDeleteModal = ref(false);
+const conversationToDelete = ref(null);
+
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
 };
 
 const conversationId = route().params["conversation"];
 
-const deleteConversation = (id) => {
-    if (confirm("Voulez-vous vraiment supprimer cette conversation ?")) {
-        router.delete(route("ask.destroy", { conversation: id }));
+const openDeleteModal = (id) => {
+    conversationToDelete.value = id;
+    showDeleteModal.value = true;
+};
+
+const confirmDelete = () => {
+    router.delete(
+        route("ask.destroy", { conversation: conversationToDelete.value })
+    );
+    showDeleteModal.value = false;
+};
+
+const isSearchVisible = ref(false);
+const searchTerm = ref("");
+
+const toggleSearch = () => {
+    isSearchVisible.value = !isSearchVisible.value;
+    if (!isSearchVisible.value) {
+        searchTerm.value = "";
     }
 };
+
+const filteredConversations = computed(() => {
+    if (!searchTerm.value) return props.conversations;
+
+    return props.conversations.filter((conversation) =>
+        conversation.title
+            .toLowerCase()
+            .includes(searchTerm.value.toLowerCase())
+    );
+});
 </script>

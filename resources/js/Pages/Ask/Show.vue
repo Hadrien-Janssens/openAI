@@ -88,16 +88,16 @@ const md = MarkdownIt({
 
 const props = defineProps({
     models: Array,
-    selectedModel: String,
     flash: Object,
     user: Object,
     conversations: Array,
     conversation: Object,
     model: String,
 });
+console.log(props.model);
 
 const message = ref("");
-const selectedAIModel = ref(props.selectedModel);
+const selectedAIModel = ref(props.model);
 const isMenuOpen = ref(true);
 const messagesContainer = ref(null);
 const localMessages = ref(props.conversation.messages);

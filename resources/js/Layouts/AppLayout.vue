@@ -46,9 +46,9 @@ const logout = () => {
         <Banner />
         <div class="flex">
             <!-- <MenuBar v-model="isMenuOpen" :conversations="conversations" /> -->
-            <div class="w-full flex flex-col duration-300">
+            <div class="flex flex-col w-full duration-300">
                 <nav
-                    class="bg-white border-b border-gray-100 flex w-full justify-between sticky top-0"
+                    class="sticky top-0 flex justify-between w-full bg-white border-b border-gray-100"
                 >
                     <TopMenuBar
                         :isMenuOpen="isMenuOpen"
@@ -60,7 +60,7 @@ const logout = () => {
                     <div class="">
                         <div class="flex justify-between h-16">
                             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                                <div class="ms-3 relative">
+                                <div class="relative ms-3">
                                     <!-- Teams Dropdown -->
                                     <Dropdown
                                         v-if="
@@ -76,7 +76,7 @@ const logout = () => {
                                             >
                                                 <button
                                                     type="button"
-                                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150"
+                                                    class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50"
                                                 >
                                                     {{
                                                         $page.props.auth.user
@@ -182,7 +182,7 @@ const logout = () => {
                                                                                 .user
                                                                                 .current_team_id
                                                                         "
-                                                                        class="me-2 size-5 text-green-400"
+                                                                        class="text-green-400 me-2 size-5"
                                                                         xmlns="http://www.w3.org/2000/svg"
                                                                         fill="none"
                                                                         viewBox="0 0 24 24"
@@ -212,7 +212,7 @@ const logout = () => {
                                 </div>
 
                                 <!-- Settings Dropdown -->
-                                <div class="ms-3 relative">
+                                <div class="relative ms-3">
                                     <Dropdown align="right" width="48">
                                         <template #trigger>
                                             <button
@@ -220,10 +220,10 @@ const logout = () => {
                                                     $page.props.jetstream
                                                         .managesProfilePhotos
                                                 "
-                                                class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition"
+                                                class="flex text-sm transition border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300"
                                             >
                                                 <img
-                                                    class="size-8 rounded-full object-cover"
+                                                    class="object-cover rounded-full size-8"
                                                     :src="
                                                         $page.props.auth.user
                                                             .profile_photo_url
@@ -241,7 +241,7 @@ const logout = () => {
                                             >
                                                 <button
                                                     type="button"
-                                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150"
+                                                    class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50"
                                                 >
                                                     {{
                                                         $page.props.auth.user
@@ -322,9 +322,9 @@ const logout = () => {
                             </div>
 
                             <!-- Hamburger -->
-                            <div class="-me-2 flex items-center sm:hidden">
+                            <div class="flex items-center -me-2 sm:hidden">
                                 <button
-                                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                                    class="inline-flex items-center justify-center p-2 text-gray-400 transition duration-150 ease-in-out rounded-md hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500"
                                     @click="
                                         showingNavigationDropdown =
                                             !showingNavigationDropdown
@@ -372,14 +372,14 @@ const logout = () => {
                         }"
                         class="sm:hidden"
                     >
-                        <div class="pt-2 pb-3 space-y-1">
+                        <!-- <div class="pt-2 pb-3 space-y-1">
                             <ResponsiveNavLink
                                 :href="route('dashboard')"
                                 :active="route().current('dashboard')"
                             >
                                 Dashboard
                             </ResponsiveNavLink>
-                        </div>
+                        </div> -->
 
                         <!-- Responsive Settings Options -->
                         <div class="pt-4 pb-1 border-t border-gray-200">
@@ -392,7 +392,7 @@ const logout = () => {
                                     class="shrink-0 me-3"
                                 >
                                     <img
-                                        class="size-10 rounded-full object-cover"
+                                        class="object-cover rounded-full size-10"
                                         :src="
                                             $page.props.auth.user
                                                 .profile_photo_url
@@ -403,12 +403,12 @@ const logout = () => {
 
                                 <div>
                                     <div
-                                        class="font-medium text-base text-gray-800"
+                                        class="text-base font-medium text-gray-800"
                                     >
                                         {{ $page.props.auth.user.name }}
                                     </div>
                                     <div
-                                        class="font-medium text-sm text-gray-500"
+                                        class="text-sm font-medium text-gray-500"
                                     >
                                         {{ $page.props.auth.user.email }}
                                     </div>
@@ -514,7 +514,7 @@ const logout = () => {
                                                                     .user
                                                                     .current_team_id
                                                             "
-                                                            class="me-2 size-5 text-green-400"
+                                                            class="text-green-400 me-2 size-5"
                                                             xmlns="http://www.w3.org/2000/svg"
                                                             fill="none"
                                                             viewBox="0 0 24 24"
@@ -543,7 +543,7 @@ const logout = () => {
 
                 <!-- Page Heading -->
                 <header v-if="$slots.header" class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
                         <slot name="header" />
                     </div>
                 </header>
