@@ -1,6 +1,12 @@
 <template>
     <div class="flex items-center justify-between p-4">
-        <div>
+        <div
+            :class="
+                !isMenuOpen
+                    ? 'flex flex-wrap items-center justify-between w-full gap-4'
+                    : 'flex flex-wrap items-center justify-end w-full gap-4'
+            "
+        >
             <i
                 v-if="!isMenuOpen"
                 class="text-xl text-gray-600 fa-solid fa-table-columns"

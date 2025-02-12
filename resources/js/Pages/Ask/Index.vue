@@ -63,7 +63,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import "highlight.js/styles/github.css"; // Ajout du style de highlight.js
 import MenuBar from "@/Components/MenuBar.vue";
@@ -87,8 +87,14 @@ const form = useForm({
     model: selectedAIModel.value,
     conversation_id: conversation_id.value,
 });
+
 watch(selectedAIModel, (newValue) => {
     form.model = newValue;
+});
+onMounted(() => {
+    if (window.innerWidth < 400) {
+        isMenuOpen.value = false;
+    }
 });
 
 const submitPrompt = () => {

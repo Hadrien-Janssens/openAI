@@ -133,6 +133,12 @@ const localMessages = ref(props.conversation.messages);
 const loader = ref(false);
 const error = ref(false);
 
+onMounted(() => {
+    if (window.innerWidth < 400) {
+        isMenuOpen.value = false;
+    }
+});
+
 const scrollToBottom = (typeOfscrolling) => {
     if (messagesContainer.value) {
         messagesContainer.value.scrollTo({

@@ -13,9 +13,13 @@
                         class="cursor-pointer fa-solid fa-magnifying-glass"
                         @click="toggleSearch"
                     ></i>
-                    <Link :href="route('ask.index')">
+                    <!-- <Link :href="route('ask.index')" @click="">
                         <i class="fa-regular fa-pen-to-square"></i>
-                    </Link>
+                    </Link> -->
+                    <i
+                        @click="newConversation()"
+                        class="fa-regular fa-pen-to-square"
+                    ></i>
                 </div>
             </div>
 
@@ -152,6 +156,7 @@ const conversationToDelete = ref(null);
 
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
+    localStorage.setItem("isMenuOpen", isMenuOpen.value);
 };
 
 const conversationId = route().params["conversation"];
@@ -190,5 +195,14 @@ const filteredConversations = computed(() => {
 
 const logout = () => {
     router.post(route("logout"));
+};
+
+const newConversation = () => {
+    if (window.innerWidth < 400) {
+        console.log(window.innerWidth);
+
+        toggleMenu();
+    }
+    router.get(route("ask.index"));
 };
 </script>
