@@ -6,6 +6,11 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+
+Route::get('/register', function () {
+    return Inertia::render('Auth/Register');
+})->name('register');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),

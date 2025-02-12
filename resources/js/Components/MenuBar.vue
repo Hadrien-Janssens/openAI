@@ -59,14 +59,9 @@
                 </div>
             </div>
         </div>
-        <div class="sticky bottom-0 z-50 w-full p-4 bg-gray-100">
+        <div class="fixed bottom-0 z-50 p-4 bg-gray-100">
             <div class="relative">
-                <Dropdown
-                    align="right"
-                    width="48"
-                    class="z-50"
-                    :placement="'top'"
-                >
+                <Dropdown align="right" class="z-50" :placement="'top'">
                     <template #trigger>
                         <button
                             v-if="$page.props.jetstream.managesProfilePhotos"

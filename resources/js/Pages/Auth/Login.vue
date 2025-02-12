@@ -1,12 +1,12 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { Head, Link, useForm } from "@inertiajs/vue3";
+import AuthenticationCard from "@/Components/AuthenticationCard.vue";
+import AuthenticationCardLogo from "@/Components/AuthenticationCardLogo.vue";
+import Checkbox from "@/Components/Checkbox.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
 
 defineProps({
     canResetPassword: Boolean,
@@ -14,17 +14,17 @@ defineProps({
 });
 
 const form = useForm({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     remember: false,
 });
 
 const submit = () => {
-    form.transform(data => ({
+    form.transform((data) => ({
         ...data,
-        remember: form.remember ? 'on' : '',
-    })).post(route('login'), {
-        onFinish: () => form.reset('password'),
+        remember: form.remember ? "on" : "",
+    })).post(route("login"), {
+        onFinish: () => form.reset("password"),
     });
 };
 </script>
@@ -37,7 +37,7 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
         </div>
 
@@ -48,7 +48,7 @@ const submit = () => {
                     id="email"
                     v-model="form.email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="block w-full mt-1"
                     required
                     autofocus
                     autocomplete="username"
@@ -57,12 +57,12 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="password" value="Mot de passe" />
                 <TextInput
                     id="password"
                     v-model="form.password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block w-full mt-1"
                     required
                     autocomplete="current-password"
                 />
@@ -72,19 +72,35 @@ const submit = () => {
             <div class="block mt-4">
                 <label class="flex items-center">
                     <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
+                    <span class="text-sm text-gray-600 ms-2"
+                        >Se souvenir de moi</span
+                    >
                 </label>
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Forgot your password?
+                <Link
+                    v-if="canResetPassword"
+                    :href="route('password.request')"
+                    class="text-sm text-gray-600 underline rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                    Mot de passe oublié ?
                 </Link>
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
+                <PrimaryButton
+                    class="ms-4"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                >
+                    Se connecter
                 </PrimaryButton>
             </div>
+            <p class="mt-4 text-center">
+                Pas encore inscrit ?
+                <Link :href="route('register')" class="text-blue-500 underline"
+                    >Créer un compte</Link
+                >
+            </p>
         </form>
     </AuthenticationCard>
 </template>
