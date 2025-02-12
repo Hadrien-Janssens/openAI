@@ -150,6 +150,7 @@ const scrollToBottom = (typeOfscrolling) => {
 let sentMessage;
 const submitPrompt = () => {
     loader.value = true;
+    console.log(error.value);
 
     if (!error.value) {
         sentMessage = "";
@@ -179,23 +180,42 @@ const submitPrompt = () => {
 
             nextTick(() => scrollToBottom("smooth"));
         }
-    }
-
-    router.post(
-        "/ask",
-        {
-            message: sentMessage,
-            model: selectedAIModel.value,
-            new: props.flash.new,
-            conversation_id: route().params["conversation"],
-        },
-        {
-            onSuccess: () => {
-                sentMessage = ""; // Réinitialiser le message après l'envoi
+        router.post(
+            "/ask",
+            {
+                message: sentMessage,
+                model: selectedAIModel.value,
+                new: props.flash.new,
+                conversation_id: route().params["conversation"],
             },
-            preserveScroll: true,
-        }
-    );
+            {
+                onSuccess: () => {
+                    sentMessage = ""; // Réinitialiser le message après l'envoi
+                },
+                preserveScroll: true,
+            }
+        );
+    } else {
+        sentMessage =
+            localMessages.value[localMessages.value.length - 2].content;
+        error.value = false;
+
+        router.post(
+            "/ask",
+            {
+                message: sentMessage,
+                model: selectedAIModel.value,
+                new: props.flash.new,
+                conversation_id: route().params["conversation"],
+            },
+            {
+                onSuccess: () => {
+                    sentMessage = ""; // Réinitialiser le message après l'envoi
+                },
+                preserveScroll: true,
+            }
+        );
+    }
 };
 const updateTitle = (conv_id) => {
     router.post("/update-title", {
@@ -252,7 +272,7 @@ onMounted(() => {
                 setTimeout(() => {
                     nextTick(() => scrollToBottom("smooth"));
                 }, 400);
-                // return;
+                return;
             }
 
             // Dès qu’on reçoit le premier chunk, on peut désactiver un éventuel spinner
