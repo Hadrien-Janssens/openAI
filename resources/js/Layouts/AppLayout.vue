@@ -423,6 +423,14 @@ const logout = () => {
                                 >
                                     Profile
                                 </ResponsiveNavLink>
+                                <DropdownLink :href="route('ask.index')">
+                                    conversation
+                                </DropdownLink>
+                                <DropdownLink
+                                    :href="route('customInstruction.index')"
+                                >
+                                    custom instruction
+                                </DropdownLink>
 
                                 <ResponsiveNavLink
                                     v-if="$page.props.jetstream.hasApiFeatures"

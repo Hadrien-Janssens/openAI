@@ -1,11 +1,11 @@
 <template>
-    <div class="flex min-h-screen overflow-hidden bg-gray-50">
+    <div class="flex min-h-[100dvh] overflow-hidden bg-white">
         <!-- BAR LATERAL  -->
         <MenuBar v-model="isMenuOpen" :conversations="conversations" />
 
         <!-- MAIN  -->
         <div
-            class="flex flex-col w-full h-screen duration-300"
+            class="flex flex-col w-full h-[100dvh] duration-300"
             :class="isMenuOpen ? 'ml-60' : 'ml-0'"
         >
             <!-- TOP BAR MENU - Fixed at top -->
@@ -24,14 +24,21 @@
                     <div class="flex flex-col space-y-4">
                         <div
                             v-for="message in localMessages"
-                            class="p-4 py-3 mb-4"
+                            class="flex items-start gap-3 p-4 py-3 mb-4"
                             :class="
                                 message.role === 'user'
-                                    ? 'bg-zinc-100 rounded-full self-end'
+                                    ? 'bg-gray-100  rounded-full self-end '
                                     : ''
                             "
-                            v-html="md.render(message.content)"
-                        ></div>
+                        >
+                            <p
+                                v-if="message.role === 'assistant'"
+                                class="relative -top-2"
+                            >
+                                <i class="text-gray-500 fa-solid fa-robot"></i>
+                            </p>
+                            <div v-html="md.render(message.content)"></div>
+                        </div>
 
                         <div v-if="loader" class="flex px-4 space-x-2">
                             <div
@@ -137,6 +144,7 @@ onMounted(() => {
     if (window.innerWidth < 400) {
         isMenuOpen.value = false;
     }
+    console.log(props.conversation.id);
 });
 
 const scrollToBottom = (typeOfscrolling) => {
@@ -186,7 +194,8 @@ const submitPrompt = () => {
                 message: sentMessage,
                 model: selectedAIModel.value,
                 new: props.flash.new,
-                conversation_id: route().params["conversation"],
+                // conversation_id: route().params["conversation"],
+                conversation_id: props.conversation.id,
             },
             {
                 onSuccess: () => {
@@ -206,7 +215,8 @@ const submitPrompt = () => {
                 message: sentMessage,
                 model: selectedAIModel.value,
                 new: props.flash.new,
-                conversation_id: route().params["conversation"],
+                // conversation_id: route().params["conversation"],
+                conversation_id: props.conversation.id,
             },
             {
                 onSuccess: () => {

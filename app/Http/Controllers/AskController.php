@@ -90,6 +90,8 @@ class AskController extends Controller
             'new'   => 'nullable|boolean',
         ]);
         $conversation = Conversation::find($request->conversation_id);
+
+
         try {
 
             // if ($request->conversation_id) {

@@ -39,16 +39,16 @@ const submitComportementForm = () => {
 
 <template>
     <AppLayout title="Profile" :user="user" :conversations="conversations">
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <!-- <template #header>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 Instructions
             </h2>
-        </template>
+        </template> -->
 
         <div class="w-full p-10 pb-0">
             <div>
-                <h3 class="text-lg font-bold mb-2">A propos de vous</h3>
-                <h4 class="text-sm mb-2">
+                <h3 class="mb-2 text-lg font-bold">A propos de vous</h3>
+                <h4 class="mb-2 text-sm">
                     Cette section est votre espace pour informer l'assistant sur
                     qui vous êtes, vos intérêts, et votre domaine d'expertise.
                     Cette information aide l'assistant à adapter ses réponses et
@@ -69,10 +69,10 @@ const submitComportementForm = () => {
 
         <div class="w-full p-10 pb-0">
             <div>
-                <h3 class="text-lg font-bold mb-2">
+                <h3 class="mb-2 text-lg font-bold">
                     Comportement de l'assistant
                 </h3>
-                <h4 class="text-sm mb-2">
+                <h4 class="mb-2 text-sm">
                     Ici, vous avez la possibilité de définir comment vous
                     souhaitez que l'assistant interagisse avec vous. Cela
                     comprend le ton des réponses, leur format, et même la
@@ -93,10 +93,10 @@ const submitComportementForm = () => {
 
         <div class="w-full p-10 pb-0">
             <div>
-                <h3 class="text-lg font-bold mb-2">
+                <h3 class="mb-2 text-lg font-bold">
                     Créer des commandes personnalisées
                 </h3>
-                <h4 class="text-sm mb-2">
+                <h4 class="mb-2 text-sm">
                     Les commandes personnalisées vous permettent de définir des
                     interactions spécifiques avec l'assistant, simplifiant et
                     accélérant l'accès à l'information ou l'exécution de tâches

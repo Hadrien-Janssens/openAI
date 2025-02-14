@@ -1,11 +1,11 @@
 <template>
-    <div class="flex min-h-screen overflow-hidden bg-gray-50">
+    <div class="flex min-h-[100dvh] overflow-hidden bg-gray-50">
         <!-- BAR LATERAL  -->
         <MenuBar v-model="isMenuOpen" :conversations="conversations" />
 
         <!-- MAIN  -->
         <div
-            class="flex flex-col w-full h-screen duration-300"
+            class="flex flex-col w-full h-[100dvh] duration-300"
             :class="isMenuOpen ? 'ml-60' : 'ml-0'"
         >
             <!-- TOP BAR MENU - Fixed at top -->
@@ -82,6 +82,7 @@ const selectedAIModel = ref(props.selectedModel);
 const isMenuOpen = ref(true);
 const messagesContainer = ref(null);
 const conversation_id = ref(null);
+
 const form = useForm({
     message: "",
     model: selectedAIModel.value,
@@ -99,6 +100,7 @@ onMounted(() => {
 
 const submitPrompt = () => {
     form.message = message.value;
+    form.conversation_id = conversation_id.value;
     form.post(route("ask.create"));
     form.reset();
 };
