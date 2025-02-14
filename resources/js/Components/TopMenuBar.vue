@@ -13,6 +13,7 @@
                 @click="$emit('update:isMenuOpen', !isMenuOpen)"
             ></i>
             <select
+                v-if="selectedAIModel"
                 v-model="selectedAIModel"
                 class="w-56 bg-transparent border-none rounded-md focus:outline-none focus:ring-0"
             >

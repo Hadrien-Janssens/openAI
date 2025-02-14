@@ -118,12 +118,30 @@
 
                             <template #content>
                                 <DropdownLink :href="route('profile.show')">
-                                    Profile
+                                    <div class="flex items-center gap-2">
+                                        <i
+                                            class="text-gray-400 fa-solid fa-user-circle"
+                                        ></i>
+                                        <p>Profile</p>
+                                    </div>
+                                </DropdownLink>
+                                <DropdownLink :href="route('ask.create')">
+                                    <div class="flex items-center gap-2">
+                                        <i
+                                            class="text-gray-400 fa-solid fa-up-right-from-square"
+                                        ></i>
+                                        <p>Nouvelle Conversation</p>
+                                    </div>
                                 </DropdownLink>
                                 <DropdownLink
                                     :href="route('customInstruction.index')"
                                 >
-                                    Instructions Personnalisées
+                                    <div class="flex items-center gap-2">
+                                        <i
+                                            class="text-gray-400 fa-solid fa-head-side-virus"
+                                        ></i>
+                                        <p>Instructions Personnalisées</p>
+                                    </div>
                                 </DropdownLink>
 
                                 <DropdownLink
@@ -138,7 +156,12 @@
                                 <!-- Authentication -->
                                 <form @submit.prevent="logout">
                                     <DropdownLink as="button">
-                                        Déconnexion
+                                        <div class="flex items-center gap-2">
+                                            <i
+                                                class="text-gray-400 fa-solid fa-arrow-right-from-bracket"
+                                            ></i>
+                                            <p>Déconnexion</p>
+                                        </div>
                                     </DropdownLink>
                                 </form>
                             </template>

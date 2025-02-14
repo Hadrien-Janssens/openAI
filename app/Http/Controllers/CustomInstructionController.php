@@ -24,12 +24,14 @@ class CustomInstructionController extends Controller
 
         $models = (new ChatService())->getModels();
 
+        $conversations = Conversation::where('user_id', Auth::id())->get();
+
 
         return Inertia::render('CustomInstruction/Index', [
             'models' => $models,
             'selectedModel' => $selectedModel,
             'user' => Auth::user(),
-
+            'conversations' => $conversations
         ]);
     }
 
