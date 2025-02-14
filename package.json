@@ -28,7 +28,7 @@
         "highlight.js": "^11.11.1",
         "lucide-vue-next": "^0.471.0",
         "markdown-it": "^14.1.0",
-        "radix-vue": "^1.9.12",
+        "radix-vue": "^1.9.14",
         "tailwind-merge": "^2.6.0",
         "tailwindcss-animate": "^1.0.7"
     }

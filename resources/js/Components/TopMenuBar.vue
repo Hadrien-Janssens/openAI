@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center justify-between p-4">
+    <div class="fixed top-0 flex items-center justify-between p-4 min-h-16">
         <div
             :class="
                 !isMenuOpen

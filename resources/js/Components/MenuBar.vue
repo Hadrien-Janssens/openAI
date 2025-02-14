@@ -1,6 +1,6 @@
 <template>
     <div
-        class="fixed top-0 left-0 h-screen overflow-scroll duration-300 bg-gray-100 no-scrollbar"
+        class="fixed top-0 left-0 z-50 h-screen overflow-scroll duration-300 bg-gray-100 no-scrollbar"
         :class="isMenuOpen ? 'w-60 ' : 'w-0'"
     >
         <div class="relative">
