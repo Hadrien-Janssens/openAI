@@ -23,6 +23,8 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.7.2",
+        "@vee-validate/zod": "^4.15.0",
+        "@vueuse/core": "^12.6.1",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "highlight.js": "^11.11.1",
@@ -30,6 +32,8 @@
         "markdown-it": "^14.1.0",
         "radix-vue": "^1.9.14",
         "tailwind-merge": "^2.6.0",
-        "tailwindcss-animate": "^1.0.7"
+        "tailwindcss-animate": "^1.0.7",
+        "vee-validate": "^4.15.0",
+        "zod": "^3.24.2"
     }
 }

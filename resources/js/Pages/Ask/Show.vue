@@ -27,7 +27,7 @@
                             class="flex items-start gap-3 p-4 py-3 mb-4"
                             :class="
                                 message.role === 'user'
-                                    ? 'bg-gray-100  rounded-full self-end '
+                                    ? 'bg-gray-100  rounded-3xl  self-end max-w-[50%] '
                                     : ''
                             "
                         >

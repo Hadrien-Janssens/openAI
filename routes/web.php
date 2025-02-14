@@ -28,6 +28,7 @@ Route::middleware([
     Route::delete('/conversation/{conversation}', [AskController::class, 'destroy'])->name('ask.destroy');
     Route::post('/ask', [AskController::class, 'streamMessage'])->name('ask.post');
     Route::get('/custom-instruction', [CustomInstructionController::class, 'index'])->name('customInstruction.index');
-    Route::post('/custom-instruction/about', [CustomInstructionController::class, 'aboutInstructions'])->name('customInstruction.aboutInstructions');
-    Route::post('/custom-instruction/comportement', [CustomInstructionController::class, 'comportementInstructions'])->name('customInstruction.comportementInstructions');
+    Route::post('/custom-instruction', [CustomInstructionController::class, 'store'])->name('customInstruction.index');
+    // Route::post('/custom-instruction/about', [CustomInstructionController::class, 'aboutInstructions'])->name('customInstruction.aboutInstructions');
+    // Route::post('/custom-instruction/comportement', [CustomInstructionController::class, 'comportementInstructions'])->name('customInstruction.comportementInstructions');
 });
