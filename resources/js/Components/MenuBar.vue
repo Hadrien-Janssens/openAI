@@ -3,7 +3,7 @@
         class="fixed top-0 left-0 z-50 h-screen overflow-scroll duration-300 bg-gray-100 no-scrollbar"
         :class="isMenuOpen ? 'w-60 ' : 'w-0'"
     >
-        <div class="relative">
+        <div>
             <div class="sticky top-0 bg-gray-100">
                 <div
                     class="flex items-center justify-between p-4 text-xl text-gray-600"
@@ -17,9 +17,6 @@
                             class="cursor-pointer fa-solid fa-magnifying-glass"
                             @click="toggleSearch"
                         ></i>
-                        <!-- <Link :href="route('ask.index')" @click="">
-                        <i class="fa-regular fa-pen-to-square"></i>
-                    </Link> -->
                         <i
                             @click="newConversation()"
                             class="fa-regular fa-pen-to-square"
@@ -67,18 +64,25 @@
                     </div>
                 </div>
                 <div
-                    class=""
-                    :class="isMenuOpen ? 'fixed bottom-0 z-50 p-4 ' : 'hidden'"
+                    :class="
+                        isMenuOpen ? 'fixed bottom-0 left-0 z-50' : 'hidden'
+                    "
                 >
                     <div class="w-full">
-                        <Dropdown align="right" class="z-50" :placement="'top'">
+                        <Dropdown
+                            align="right"
+                            class=""
+                            :placement="'top'"
+                            @someEvent="toggleIcon = !toggleIcon"
+                            @click="toggleIcon = !toggleIcon"
+                        >
                             <template #trigger>
                                 <button
                                     v-if="
                                         $page.props.jetstream
                                             .managesProfilePhotos
                                     "
-                                    class="flex items-center gap-10 px-5 py-1 text-sm transition bg-white border border-blue-400 rounded-full focus:outline-none focus:border-gray-300"
+                                    class="flex items-center gap-10 px-5 py-1 pt-3 text-sm transition bg-white w-60 focus:outline-none focus:border-gray-300 hover:bg-gray-100 hover:cursor-pointer"
                                 >
                                     <img
                                         class="object-cover rounded-full size-8"
@@ -89,6 +93,14 @@
                                         :alt="$page.props.auth.user.name"
                                     />
                                     <p>{{ $page.props.auth.user.name }}</p>
+                                    <i
+                                        v-if="!toggleIcon"
+                                        class="fa-solid fa-ellipsis"
+                                    ></i>
+                                    <i
+                                        v-else
+                                        class="cursor-pointer fa-solid fa-times hover:cursor-pointer"
+                                    ></i>
                                 </button>
 
                                 <span v-else class="inline-flex rounded-md">
@@ -125,8 +137,10 @@
                                         <p>Profile</p>
                                     </div>
                                 </DropdownLink>
-                                <DropdownLink :href="route('ask.create')">
-                                    <div class="flex items-center gap-2">
+                                <DropdownLink :href="route('ask.index')">
+                                    <div
+                                        class="flex items-center gap-2 z-[9999]"
+                                    >
                                         <i
                                             class="text-gray-400 fa-solid fa-up-right-from-square"
                                         ></i>
@@ -189,6 +203,7 @@ const props = defineProps({
 const isMenuOpen = defineModel();
 const showDeleteModal = ref(false);
 const conversationToDelete = ref(null);
+const toggleIcon = ref(false);
 
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
@@ -234,9 +249,7 @@ const logout = () => {
 };
 
 const newConversation = () => {
-    if (window.innerWidth < 400) {
-        console.log(window.innerWidth);
-
+    if (window.innerWidth < 500) {
         toggleMenu();
     }
     router.get(route("ask.index"));

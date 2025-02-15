@@ -48,6 +48,7 @@ const alignmentClasses = computed(() => {
 
     return "origin-top";
 });
+const emit = defineEmits(["someEvent"]);
 </script>
 
 <template>
@@ -57,7 +58,11 @@ const alignmentClasses = computed(() => {
         </div>
 
         <!-- Full Screen Dropdown Overlay -->
-        <div v-show="open" class="fixed inset-0 z-40" @click="open = false" />
+        <div
+            v-show="open"
+            class="inset-0"
+            @click="open = false && $emit('someEvent')"
+        />
 
         <transition
             enter-active-class="transition duration-200 ease-out"
@@ -69,18 +74,15 @@ const alignmentClasses = computed(() => {
         >
             <div
                 v-show="open"
-                class="absolute z-50 mt-2 rounded-md shadow-lg"
+                class=""
                 :class="
                     ([widthClass, alignmentClasses],
-                    { 'bottom-0 left-10': placement === 'top' })
+                    { 'bottom-0 left-24': placement === 'top' })
                 "
                 style="display: none"
                 @click="open = false"
             >
-                <div
-                    class="rounded-md ring-1 ring-black ring-opacity-5 w-60"
-                    :class="contentClasses"
-                >
+                <div class="z-50 w-60" :class="contentClasses">
                     <slot name="content" />
                 </div>
             </div>

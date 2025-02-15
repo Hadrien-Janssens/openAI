@@ -18,16 +18,16 @@
             />
 
             <!-- RESPONSE WINDOW - Scrollable -->
-            <div class="flex-1 p-4 overflow-y-auto" ref="messagesContainer">
+            <div class="p-4 overflow-y-auto" ref="messagesContainer">
                 <div class="w-full h-full max-w-3xl mx-auto">
                     <!-- Messages existants -->
-                    <div class="flex flex-col space-y-4">
+                    <div class="flex flex-col w-full gap-4">
                         <div
                             v-for="message in localMessages"
-                            class="flex items-start gap-3 p-4 py-3 mb-4"
+                            class="flex items-start gap-3 p-4"
                             :class="
                                 message.role === 'user'
-                                    ? 'bg-gray-100  rounded-3xl  self-end max-w-[50%] '
+                                    ? 'bg-gray-100  rounded-3xl  self-end max-w-[70%] '
                                     : ''
                             "
                         >
@@ -37,7 +37,10 @@
                             >
                                 <i class="text-gray-500 fa-solid fa-robot"></i>
                             </p>
-                            <div v-html="md.render(message.content)"></div>
+                            <span
+                                v-html="md.render(message.content)"
+                                class="w-full"
+                            ></span>
                         </div>
 
                         <div v-if="loader" class="flex px-4 space-x-2">
@@ -79,7 +82,7 @@
                         <div class="flex flex-col p-2 bg-zinc-100 rounded-3xl">
                             <textarea
                                 v-model="message"
-                                rows="2"
+                                rows="1"
                                 class="w-full p-4 bg-transparent border-none resize-none rounded-3xl focus:outline-none focus:ring-0"
                                 placeholder="Écrivez votre message ici..."
                             ></textarea>
@@ -107,19 +110,27 @@ import { router, usePage } from "@inertiajs/vue3";
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css"; // Ajout du style de highlight.js
+// import "highlight.js/styles/atom-one-dark.css";
 import MenuBar from "../../Components/MenuBar.vue";
 import TopMenuBar from "../../Components/TopMenuBar.vue";
 
-// Actual default values
-const md = MarkdownIt({
+const md = new MarkdownIt({
     highlight: function (str, lang) {
         if (lang && hljs.getLanguage(lang)) {
             try {
-                return hljs.highlight(str, { language: lang }).value;
+                return `<pre class="w-[270px] mx-auto md:w-[500px] lg:w-[650px] p-4 overflow-x-scroll bg-gray-200 rounded-lg my-3">
+                        <code class="w-full">
+                            ${hljs.highlight(str, { language: lang }).value}
+                        </code>
+                    </pre>`;
             } catch (__) {}
         }
-        return ""; // use external default escaping
+        return `<pre>
+                <code class="">${md.utils.escapeHtml(str)}</code>
+            </pre>`;
     },
+    linkify: true,
+    breaks: true,
 });
 
 const props = defineProps({
@@ -139,13 +150,6 @@ const messagesContainer = ref(null);
 const localMessages = ref(props.conversation.messages);
 const loader = ref(false);
 const error = ref(false);
-
-onMounted(() => {
-    if (window.innerWidth < 400) {
-        isMenuOpen.value = false;
-    }
-    console.log(props.conversation.id);
-});
 
 const scrollToBottom = (typeOfscrolling) => {
     if (messagesContainer.value) {
@@ -241,6 +245,10 @@ watch(
 );
 
 onMounted(() => {
+    if (window.innerWidth < 500) {
+        isMenuOpen.value = false;
+    }
+    console.log(props.conversation.id);
     if (props.flash.new) {
         submitPrompt();
     }

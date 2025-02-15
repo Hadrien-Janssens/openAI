@@ -93,7 +93,7 @@ watch(selectedAIModel, (newValue) => {
     form.model = newValue;
 });
 onMounted(() => {
-    if (window.innerWidth < 400) {
+    if (window.innerWidth < 500) {
         isMenuOpen.value = false;
     }
 });

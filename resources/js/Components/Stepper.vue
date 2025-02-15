@@ -115,7 +115,7 @@ const submit = () => {
             </StepperItem>
         </div>
 
-        <div class="flex flex-col gap-4 mt-4">
+        <div class="flex flex-col gap-4">
             <template v-if="stepIndex === 1">
                 <div class="w-full p-10 pb-0">
                     <div class="mt-10">

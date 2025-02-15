@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { router } from "@inertiajs/vue3";
 import MenuBar from "@/Components/MenuBar.vue";
 import TopMenuBar from "@/Components/TopMenuBar.vue";
@@ -17,6 +17,12 @@ const comportementInstruction = ref(props.user.comportement_instruction);
 const commandeInstruction = ref(props.user.commande_instruction);
 
 const isMenuOpen = ref(true);
+
+onMounted(() => {
+    if (window.innerWidth < 500) {
+        isMenuOpen.value = false;
+    }
+});
 </script>
 
 <template>
