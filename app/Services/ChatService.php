@@ -119,6 +119,7 @@ class ChatService
         $now = now()->locale('fr')->format('l d F Y H:i');
         $aboutInstruction = $user->about_instruction;
         $comportementInstruction = $user->comportement_instruction;
+        $commandeInstruction = $user->commande_instruction;
 
         return [
             'role' => 'system',
@@ -127,6 +128,11 @@ class ChatService
                 Tu es actuellement utilisé par {$user->name}.
                 Tu as été configuré pour répondre à des questions en prenant en compte la section a propos que voici : {$aboutInstruction}.
                 Tu as été configuré pour répondre à des questions en adoptant les comportements suivants: {$comportementInstruction}.
+                Tu as été configuré pour répondre à des questions en prenant en compte les commandes suivantes: {$commandeInstruction}.
+                les commandes le principe est le suivant : le premier mot commence pas un slash suivi du nom de la commande ensuite vienne les instructions de la commande.
+                Par exemple : /résume tu dois résumer un texte.
+                Cas concrêt : /résume "voici un long texte à résumer"
+                tu repondras uniquement le texte résumé.
                 EOT,
         ];
     }

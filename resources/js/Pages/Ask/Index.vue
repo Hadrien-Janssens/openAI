@@ -38,6 +38,17 @@
                                         rows="2"
                                         class="w-full p-4 bg-transparent border-none resize-none rounded-3xl focus:outline-none focus:ring-0"
                                         placeholder="Écrivez votre message ici..."
+                                        @keydown="
+                                            (e) => {
+                                                if (
+                                                    e.key === 'Enter' &&
+                                                    !e.shiftKey
+                                                ) {
+                                                    e.preventDefault();
+                                                    submitPrompt();
+                                                }
+                                            }
+                                        "
                                     ></textarea>
                                     <div
                                         class="flex items-center justify-end pl-5"

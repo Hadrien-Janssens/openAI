@@ -18,7 +18,7 @@
             />
 
             <!-- RESPONSE WINDOW - Scrollable -->
-            <div class="p-4 overflow-y-auto" ref="messagesContainer">
+            <div class="p-4 overflow-y-auto grow" ref="messagesContainer">
                 <div class="w-full h-full max-w-3xl mx-auto">
                     <!-- Messages existants -->
                     <div class="flex flex-col w-full gap-4">
@@ -85,6 +85,14 @@
                                 rows="1"
                                 class="w-full p-4 bg-transparent border-none resize-none rounded-3xl focus:outline-none focus:ring-0"
                                 placeholder="Écrivez votre message ici..."
+                                @keydown="
+                                    (e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            submitPrompt();
+                                        }
+                                    }
+                                "
                             ></textarea>
 
                             <button
@@ -118,8 +126,9 @@ const md = new MarkdownIt({
     highlight: function (str, lang) {
         if (lang && hljs.getLanguage(lang)) {
             try {
-                return `<pre class="w-[270px] mx-auto md:w-[500px] lg:w-[650px] p-4 overflow-x-scroll bg-gray-200 rounded-lg my-3">
-                        <code class="w-full">
+                return `<pre class="w-[270px] mx-auto md:w-[500px] lg:w-[650px] p-4 overflow-x-scroll bg-gray-200 rounded-lg my-3  ">
+                        <code class="relative w-full ">
+                            <div class='absolute top-0 z-50 px-3 text-gray-500 transition-all bg-gray-200 border border-gray-500 rounded-sm hover:bg-gray-300 hover:cursor-pointer' ><i class="fa-regular fa-clone"></i></div>
                             ${hljs.highlight(str, { language: lang }).value}
                         </code>
                     </pre>`;

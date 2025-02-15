@@ -4,7 +4,7 @@
         :class="isMenuOpen ? 'w-60 ' : 'w-0'"
     >
         <div>
-            <div class="sticky top-0 bg-gray-100">
+            <div class="sticky top-0 z-10 bg-gray-100">
                 <div
                     class="flex items-center justify-between p-4 text-xl text-gray-600"
                 >
