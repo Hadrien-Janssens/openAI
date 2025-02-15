@@ -191,15 +191,26 @@
 
 <script setup>
 import { Link, router } from "@inertiajs/vue3";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import ConfirmationModal from "./ConfirmationModal.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 
+const conversations = ref([]);
 const props = defineProps({
-    conversations: Object,
+    title: Boolean,
 });
-
+watch(
+    () => props.title,
+    (value) => {
+        fetch(route("conversation.index"))
+            .then((response) => response.json())
+            .then((data) => {
+                conversations.value = data;
+                // filteredConversations.value = data;
+            });
+    }
+);
 const isMenuOpen = defineModel();
 const showDeleteModal = ref(false);
 const conversationToDelete = ref(null);
@@ -235,9 +246,9 @@ const toggleSearch = () => {
 };
 
 const filteredConversations = computed(() => {
-    if (!searchTerm.value) return props.conversations;
+    if (!searchTerm.value) return conversations.value;
 
-    return props.conversations.filter((conversation) =>
+    return conversations.value.filter((conversation) =>
         conversation.title
             .toLowerCase()
             .includes(searchTerm.value.toLowerCase())
@@ -254,4 +265,13 @@ const newConversation = () => {
     }
     router.get(route("ask.index"));
 };
+
+onMounted(() => {
+    fetch(route("conversation.index"))
+        .then((response) => response.json())
+        .then((data) => {
+            conversations.value = data;
+            // filteredConversations.value = data;
+        });
+});
 </script>

@@ -26,6 +26,7 @@ Route::middleware([
     Route::post('/update-title', [AskController::class, 'updateTitle'])->name('ask.updateTitle');
     Route::get('/conversation/{conversation}', [AskController::class, 'show'])->name('ask.show');
     Route::delete('/conversation/{conversation}', [AskController::class, 'destroy'])->name('ask.destroy');
+    Route::get('/conversation', [AskController::class, 'conversation'])->name('conversation.index');
     Route::post('/ask', [AskController::class, 'streamMessage'])->name('ask.post');
     Route::get('/custom-instruction', [CustomInstructionController::class, 'index'])->name('customInstruction.index');
     Route::post('/custom-instruction', [CustomInstructionController::class, 'store'])->name('customInstruction.index');

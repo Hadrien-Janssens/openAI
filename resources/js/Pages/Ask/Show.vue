@@ -1,7 +1,11 @@
 <template>
     <div class="flex min-h-[100dvh] overflow-hidden bg-white">
         <!-- BAR LATERAL  -->
-        <MenuBar v-model="isMenuOpen" :conversations="conversations" />
+        <MenuBar
+            v-model="isMenuOpen"
+            :conversations="conversations"
+            :title="title"
+        />
 
         <!-- MAIN  -->
         <div
@@ -159,6 +163,7 @@ const messagesContainer = ref(null);
 const localMessages = ref(props.conversation.messages);
 const loader = ref(false);
 const error = ref(false);
+const title = ref(false);
 
 const scrollToBottom = (typeOfscrolling) => {
     if (messagesContainer.value) {
@@ -252,12 +257,17 @@ watch(
         selectedAIModel.value = model;
     }
 );
+watch(
+    () => props.flash.title,
+    (v) => {
+        title.value = v;
+    }
+);
 
 onMounted(() => {
     if (window.innerWidth < 500) {
         isMenuOpen.value = false;
     }
-    console.log(props.conversation.id);
     if (props.flash.new) {
         submitPrompt();
     }

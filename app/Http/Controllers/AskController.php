@@ -193,7 +193,6 @@ class AskController extends Controller
                     error: true
                 ));
             }
-
             // return response()->json(['error' => $e->getMessage()], 500);
             return redirect()->route('ask.show', $conversation->id)->with([
                 'model' => $request->model,
@@ -203,7 +202,6 @@ class AskController extends Controller
     }
     public function updateTitle(Request $request)
     {
-        // dd($request->all());
         $conversation = Conversation::find($request->conv_id);
         $model = $conversation->current_llm;
         $messages = $conversation->messages()
@@ -243,6 +241,7 @@ class AskController extends Controller
         // return redirect()->route('ask.show', $conversation->id);
         return redirect()->route('ask.show', $conversation->id)->with([
             'model' => $model,
+            'title' => true,
         ]);
     }
     public function destroy($conversation)
@@ -250,5 +249,12 @@ class AskController extends Controller
         $conversation = Conversation::find($conversation);
         $conversation->delete();
         return redirect()->route('ask.index');
+    }
+
+    public function conversation()
+    {
+        $conversations = Conversation::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
+        // return les conversations en json
+        return response()->json($conversations);
     }
 }
