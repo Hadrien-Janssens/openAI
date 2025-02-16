@@ -200,6 +200,7 @@ const conversations = ref([]);
 const props = defineProps({
     title: Boolean,
 });
+
 watch(
     () => props.title,
     (value) => {
@@ -207,7 +208,6 @@ watch(
             .then((response) => response.json())
             .then((data) => {
                 conversations.value = data;
-                // filteredConversations.value = data;
             });
     }
 );
@@ -271,7 +271,6 @@ onMounted(() => {
         .then((response) => response.json())
         .then((data) => {
             conversations.value = data;
-            // filteredConversations.value = data;
         });
 });
 </script>

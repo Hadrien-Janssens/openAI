@@ -68,7 +68,7 @@ class AskController extends Controller
             'current_llm' => $request->model,
         ]);
 
-        // auth()->user()->update(['current_llm' => $request->model]);
+        auth()->user()->update(['current_llm' => $request->model]);
 
         $conversation->messages()->create([
             'role' => 'user',
@@ -94,8 +94,6 @@ class AskController extends Controller
 
         try {
 
-            // if ($request->conversation_id) {
-            // 1. Sauvegarder le message de l'utilisateur
             if (!$request->new) {
                 $conversation->messages()->create([
                     'content' => $request->input('message'),
@@ -177,12 +175,9 @@ class AskController extends Controller
                 isComplete: true
             ));
 
-            // return response()->json("ok");
             return redirect()->route('ask.show', $conversation->id)->with([
                 'model' => $request->model,
             ]);
-
-            // }
         } catch (\Exception $e) {
             // Diffuser l’erreur
             if (isset($conversation)) {
@@ -193,7 +188,6 @@ class AskController extends Controller
                     error: true
                 ));
             }
-            // return response()->json(['error' => $e->getMessage()], 500);
             return redirect()->route('ask.show', $conversation->id)->with([
                 'model' => $request->model,
                 'error' => $e->getMessage(),
@@ -213,7 +207,6 @@ class AskController extends Controller
             ])
             ->toArray();
 
-        //create a title for the conversation with AI
         $prompt = "Génère un titre de quelques mots ( une phrase maximum ) pour cette conversation ";
 
         $messages = [
@@ -234,11 +227,14 @@ class AskController extends Controller
                 );
                 $haveError = false;
             } catch (\Throwable $th) {
+                return redirect()->route('ask.show', $conversation->id)->with([
+                    'model' => $model,
+                    'title' => false,
+                ]);
             }
         }
 
         $conversation->update(['title' => $title]);
-        // return redirect()->route('ask.show', $conversation->id);
         return redirect()->route('ask.show', $conversation->id)->with([
             'model' => $model,
             'title' => true,
@@ -254,7 +250,12 @@ class AskController extends Controller
     public function conversation()
     {
         $conversations = Conversation::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
-        // return les conversations en json
         return response()->json($conversations);
+    }
+
+    public function deleteTwoLastMessages(Conversation $conversation)
+    {
+        $conversation->messages()->orderBy('created_at', 'desc')->take(2)->delete();
+        return redirect()->route('ask.show', $conversation->id);
     }
 }

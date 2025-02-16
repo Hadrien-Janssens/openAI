@@ -35,28 +35,12 @@ class CustomInstructionController extends Controller
         ]);
     }
 
-    // public function aboutInstructions(Request $request)
-    // {
-    //     // update du champ "about_instruction" du user
-    //     auth()->user()->update(['about_instruction' => $request->aboutInstruction]);
-
-    //     return redirect()->back();
-    // }
-
-    // public function comportementInstructions(Request $request)
-    // {
-    //     // update du champ "comportement_instruction" du user
-    //     auth()->user()->update(['comportement_instruction' => $request->comportementInstruction]);
-
-    //     return redirect()->back();
-    // }
     public function store(Request $request)
     {
         // update du champ "about_instruction" du user
         auth()->user()->update(['about_instruction' => $request->aboutInstruction]);
         auth()->user()->update(['comportement_instruction' => $request->comportementInstruction]);
         auth()->user()->update(['commande_instruction' => $request->commandeInstruction]);
-
 
         return redirect()->back();
     }

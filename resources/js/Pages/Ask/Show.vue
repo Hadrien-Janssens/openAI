@@ -121,8 +121,7 @@ import { ref, watch, nextTick, onMounted } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
-import "highlight.js/styles/github.css"; // Ajout du style de highlight.js
-// import "highlight.js/styles/atom-one-dark.css";
+import "highlight.js/styles/github.css";
 import MenuBar from "../../Components/MenuBar.vue";
 import TopMenuBar from "../../Components/TopMenuBar.vue";
 
@@ -176,7 +175,6 @@ const scrollToBottom = (typeOfscrolling) => {
 let sentMessage;
 const submitPrompt = () => {
     loader.value = true;
-    console.log(error.value);
 
     if (!error.value) {
         sentMessage = "";
@@ -212,19 +210,25 @@ const submitPrompt = () => {
                 message: sentMessage,
                 model: selectedAIModel.value,
                 new: props.flash.new,
-                // conversation_id: route().params["conversation"],
                 conversation_id: props.conversation.id,
             },
             {
                 onSuccess: () => {
-                    sentMessage = ""; // Réinitialiser le message après l'envoi
+                    sentMessage = "";
                 },
                 preserveScroll: true,
             }
         );
     } else {
         sentMessage =
-            localMessages.value[localMessages.value.length - 2].content;
+            localMessages.value[localMessages.value.length - 1].content;
+        console.log(sentMessage);
+
+        localMessages.value.push({
+            content: "",
+            role: "assistant",
+            isLoading: true,
+        });
         error.value = false;
 
         router.post(
@@ -233,12 +237,11 @@ const submitPrompt = () => {
                 message: sentMessage,
                 model: selectedAIModel.value,
                 new: props.flash.new,
-                // conversation_id: route().params["conversation"],
                 conversation_id: props.conversation.id,
             },
             {
                 onSuccess: () => {
-                    sentMessage = ""; // Réinitialiser le message après l'envoi
+                    sentMessage = "";
                 },
                 preserveScroll: true,
             }
@@ -248,6 +251,12 @@ const submitPrompt = () => {
 const updateTitle = (conv_id) => {
     router.post("/update-title", {
         conv_id,
+    });
+};
+const deleteTwoLastMessages = () => {
+    localMessages.value.pop();
+    router.delete(route("ask.deleteTwoLastMessages"), {
+        conversation: props.conversation.id,
     });
 };
 
@@ -260,7 +269,11 @@ watch(
 watch(
     () => props.flash.title,
     (v) => {
-        title.value = v;
+        if (v) {
+            title.value = v;
+        } else {
+            updateTitle(props.conversation.id);
+        }
     }
 );
 
@@ -283,52 +296,33 @@ onMounted(() => {
             console.error("❌ Erreur de connexion au canal:", error);
         })
         .listen(".message.streamed", (event) => {
-            // console.log("📨 Message reçu:", event);
-
             const lastMessage =
                 localMessages.value[localMessages.value.length - 1];
 
-            // Vérifier qu'on ait bien un message assistant en cours
             if (!lastMessage || lastMessage.role !== "assistant") {
                 console.log("⚠️ Aucun message assistant ciblé pour concaténer");
                 return;
             }
-            // Gestion d'erreur éventuelle
             if (event.error) {
-                console.error("❌ Erreur reçue:", event.error);
-                console.log(event.content);
-
                 loader.value = false;
-                // lastMessage.content +=
-                //     "Une erreur est survenue. Veuillez réessayer.";
                 error.value = true;
-
-                // On peut retirer le message assistant, avertir l’utilisateur, etc.
-                // localMessages.value.pop();
+                deleteTwoLastMessages();
                 usePage().props.flash.error = event.content;
                 setTimeout(() => {
                     nextTick(() => scrollToBottom("smooth"));
                 }, 400);
                 return;
             }
-
-            // Dès qu’on reçoit le premier chunk, on peut désactiver un éventuel spinner
             if (lastMessage.isLoading && event.content) {
-                console.log("🔄 Premier chunk reçu, on enlève le loading");
                 loader.value = false;
-                // lastMessage.isLoading = false;
             }
 
-            // Ajouter le chunk reçu
             if (!event.isComplete) {
                 lastMessage.content += event.content;
             }
 
-            // Si c’est la fin, on peut déclencher des actions (comme l’update du titre)
             if (event.isComplete) {
-                console.log("✅ Message complet reçu");
                 if (localMessages.value.length === 2) {
-                    // console.log(props.conversation.title);
                     updateTitle(props.conversation.id);
                 }
 

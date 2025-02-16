@@ -128,11 +128,14 @@ class ChatService
                 Tu es actuellement utilisé par {$user->name}.
                 Tu as été configuré pour répondre à des questions en prenant en compte la section a propos que voici : {$aboutInstruction}.
                 Tu as été configuré pour répondre à des questions en adoptant les comportements suivants: {$comportementInstruction}.
-                Tu as été configuré pour répondre à des questions en prenant en compte les commandes suivantes: {$commandeInstruction}.
-                les commandes le principe est le suivant : le premier mot commence pas un slash suivi du nom de la commande ensuite vienne les instructions de la commande.
+                Tu as été configuré pour répondre à des questions en prenant en compte les commandes.
+                le principe est le suivant : le premier mot commence pas un slash suivi du nom de la commande ensuite vienne les instructions de la commande.
                 Par exemple : /résume tu dois résumer un texte.
                 Cas concrêt : /résume "voici un long texte à résumer"
                 tu repondras uniquement le texte résumé.
+                il s'agit de ta priorité absolue. Quand tu vois un slash dans le texte, cela signifie que tu dois exécuter une commande. c'est à dire que tu dois effectuer une action spécifique. et ne pas repondre a la question mais juste faire ce qui est demandé à travers la commande.
+                   voici les commandes enregistrée et que seront ta priorité dans ta la reponse que tu va générer : {$commandeInstruction}.
+
                 EOT,
         ];
     }
