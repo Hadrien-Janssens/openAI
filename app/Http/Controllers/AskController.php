@@ -8,12 +8,15 @@ use App\Models\User;
 use App\Services\ChatService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class AskController extends Controller
 {
     public function index()
     {
+
+
         //find model preference
         $user = User::find(Auth::id());
 
@@ -36,6 +39,8 @@ class AskController extends Controller
 
     public function show(Conversation $conversation)
     {
+
+
         //find model preference
         $user = User::find(Auth::id());
 
@@ -62,6 +67,8 @@ class AskController extends Controller
     }
     public function create(Request $request)
     {
+
+
         $conversation = Conversation::create([
             'user_id' => Auth::id(),
             'title' => 'Nouvelle conversation',
@@ -132,25 +139,36 @@ class AskController extends Controller
             $lastBroadcastTime = microtime(true) * 1000; // ms
 
             // 7. Itération sur le flux
-            foreach ($stream as $response) {
-                $chunk = $response->choices[0]->delta->content ?? '';
+            try {
+                foreach ($stream as $response) {
+                    // Le SDK peut parfois lever l'exception ici même si l'objet semble vide
+                    // On récupère le contenu de manière ultra-sécurisée
+                    $chunk = $response->choices[0]->delta->content ?? null;
 
-                if ($chunk) {
-                    $fullResponse .= $chunk;
-                    $buffer .= $chunk;
+                    if ($chunk) {
+                        $fullResponse .= $chunk;
+                        $buffer .= $chunk;
 
-                    // Broadcast seulement toutes les ~100ms
-                    $currentTime = microtime(true) * 1000;
-                    if ($currentTime - $lastBroadcastTime >= 100) {
-                        broadcast(new ChatMessageStreamed(
-                            channel: $channelName,
-                            content: $buffer,
-                            isComplete: false
-                        ));
+                        $currentTime = microtime(true) * 1000;
+                        if ($currentTime - $lastBroadcastTime >= 100) {
+                            broadcast(new ChatMessageStreamed(
+                                channel: $channelName,
+                                content: $buffer,
+                                isComplete: false
+                            ));
 
-                        $buffer = '';
-                        $lastBroadcastTime = $currentTime;
+                            $buffer = '';
+                            $lastBroadcastTime = $currentTime;
+                        }
                     }
+                }
+            } catch (\Exception $e) {
+                // Si c'est l'erreur spécifique de tokens, on l'ignore car on a déjà le texte
+                if (str_contains($e->getMessage(), 'accepted_prediction_tokens')) {
+                    logger()->warning("Erreur de tokens ignorée en fin de stream");
+                } else {
+                    // Si c'est une autre erreur, on la relance
+                    throw $e;
                 }
             }
 
@@ -196,6 +214,9 @@ class AskController extends Controller
     }
     public function updateTitle(Request $request)
     {
+        Log::info('Mon updatetitle est appelé');
+
+
         $conversation = Conversation::find($request->conv_id);
         $model = $conversation->current_llm;
         $messages = $conversation->messages()
@@ -242,6 +263,8 @@ class AskController extends Controller
     }
     public function destroy($conversation)
     {
+
+
         $conversation = Conversation::find($conversation);
         $conversation->delete();
         return redirect()->route('ask.index');
@@ -249,12 +272,17 @@ class AskController extends Controller
 
     public function conversation()
     {
+        Log::info('Mon conversation est appelé');
+
         $conversations = Conversation::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
         return response()->json($conversations);
     }
 
     public function deleteTwoLastMessages(Conversation $conversation)
     {
+        Log::info('Mon delete2mess est appelé');
+
+
         $conversation->messages()->orderBy('created_at', 'desc')->take(2)->delete();
         return redirect()->route('ask.show', $conversation->id);
     }

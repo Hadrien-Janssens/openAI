@@ -296,6 +296,8 @@ onMounted(() => {
             console.error("❌ Erreur de connexion au canal:", error);
         })
         .listen(".message.streamed", (event) => {
+            console.log(event);
+
             const lastMessage =
                 localMessages.value[localMessages.value.length - 1];
 
@@ -306,7 +308,7 @@ onMounted(() => {
             if (event.error) {
                 loader.value = false;
                 error.value = true;
-                deleteTwoLastMessages();
+                // deleteTwoLastMessages();
                 usePage().props.flash.error = event.content;
                 setTimeout(() => {
                     nextTick(() => scrollToBottom("smooth"));

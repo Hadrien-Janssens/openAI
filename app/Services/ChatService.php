@@ -9,11 +9,11 @@ class ChatService
     private $baseUrl;
     private $apiKey;
     private $client;
-    public const DEFAULT_MODEL = 'meta-llama/llama-3.2-11b-vision-instruct:free';
+    public const DEFAULT_MODEL = 'meta-llama/llama-3.3-70b-instruct:free';
 
     public function __construct()
     {
-        $this->baseUrl = config('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
+        $this->baseUrl = config('services.openrouter.base_url', 'https://openrouter.ai/api/v1/');
         $this->apiKey = config('services.openrouter.api_key');
         $this->client = $this->createOpenAIClient();
     }
@@ -61,40 +61,105 @@ class ChatService
      *
      * @return string
      */
+    // public function sendMessage(array $messages, string $model = null, float $temperature = 0.7): string
+    // {
+    //     try {
+    //         logger()->info('Envoi du message', [
+    //             'model' => $model,
+    //             'temperature' => $temperature,
+    //         ]);
+
+    //         $models = collect($this->getModels());
+    //         if (!$model || !$models->contains('id', $model)) {
+    //             $model = self::DEFAULT_MODEL;
+    //             logger()->info('Modèle par défaut utilisé:', ['model' => $model]);
+    //         } else {
+    //             logger()->info("t'utilises le nouveau model ", ['model' => $model]);
+    //         }
+
+    //         $messages = [$this->getChatSystemPrompt(), ...$messages];
+    //         $response = $this->client->chat()->create([
+    //             'model' => $model,
+    //             'messages' => $messages,
+    //             'temperature' => $temperature,
+    //         ]);
+
+    //         logger()->info('Réponse reçue:', ['response' => $response]);
+
+    //         $content = $response->choices[0]->message->content;
+
+    //         return $content;
+    //     } catch (\Exception $e) {
+    //         if ($e->getMessage() === 'Undefined array key "choices"') {
+    //             throw new \Exception("Limite de messages atteinte");
+    //         }
+
+    //         logger()->error('Erreur dans sendMessage:', [
+    //             'message' => $e->getMessage(),
+    //             'trace' => $e->getTraceAsString(),
+    //         ]);
+
+    //         throw $e;
+    //     }
+    // }
     public function sendMessage(array $messages, string $model = null, float $temperature = 0.7): string
     {
         try {
-            logger()->info('Envoi du message', [
+            logger()->info('Envoi du message (Native HTTP)', [
                 'model' => $model,
                 'temperature' => $temperature,
             ]);
 
+            // 1. Validation du modèle
             $models = collect($this->getModels());
             if (!$model || !$models->contains('id', $model)) {
                 $model = self::DEFAULT_MODEL;
                 logger()->info('Modèle par défaut utilisé:', ['model' => $model]);
+            } else {
+                logger()->info("Utilisation du modèle sélectionné", ['model' => $model]);
             }
 
-            $messages = [$this->getChatSystemPrompt(), ...$messages];
-            $response = $this->client->chat()->create([
-                'model' => $model,
-                'messages' => $messages,
+            // 2. Préparation des messages
+            $fullMessages = [$this->getChatSystemPrompt(), ...$messages];
+
+            // 3. Appel API direct (contourne les erreurs de mapping du SDK)
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Content-Type'  => 'application/json',
+            ])->post(rtrim($this->baseUrl, '/') . '/chat/completions', [
+                'model'       => $model,
+                'messages'    => $fullMessages,
                 'temperature' => $temperature,
             ]);
 
-            logger()->info('Réponse reçue:', ['response' => $response]);
+            if ($response->failed()) {
+                $errorData = $response->json();
 
-            $content = $response->choices[0]->message->content;
+                // Gestion spécifique de la limite de messages/crédit
+                if (isset($errorData['error']['message']) && str_contains($errorData['error']['message'], 'choices')) {
+                    throw new \Exception("Limite de messages atteinte");
+                }
+
+                throw new \Exception("Erreur API OpenRouter: " . ($errorData['error']['message'] ?? 'Erreur inconnue'));
+            }
+
+            $data = $response->json();
+
+            // 4. Extraction sécurisée du contenu
+            if (!isset($data['choices'][0]['message']['content'])) {
+                logger()->error('Format de réponse invalide', ['data' => $data]);
+                throw new \Exception("La réponse de l'IA est vide ou malformée.");
+            }
+
+            $content = $data['choices'][0]['message']['content'];
+
+            logger()->info('Réponse reçue avec succès');
 
             return $content;
         } catch (\Exception $e) {
-            if ($e->getMessage() === 'Undefined array key "choices"') {
-                throw new \Exception("Limite de messages atteinte");
-            }
-
             logger()->error('Erreur dans sendMessage:', [
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'trace'   => $e->getTraceAsString(),
             ]);
 
             throw $e;

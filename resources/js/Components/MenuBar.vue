@@ -199,6 +199,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 const conversations = ref([]);
 const props = defineProps({
     title: Boolean,
+    conversations: Array,
 });
 
 watch(
